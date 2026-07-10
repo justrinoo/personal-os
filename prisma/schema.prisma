@@ -1,0 +1,336 @@
+// Personal Engineering OS — Core Schema (Phase 1)
+// Relational chain: Workspace → Client → Project → Sprint → Feature → Task
+// Plus: Daily Activities, Deployments, Journal, Habits
+
+generator client {
+  provider = "prisma-client"
+  output   = "../lib/generated/prisma"
+}
+
+datasource db {
+  provider = "postgresql"
+}
+
+// ─────────────────────────────────────────────
+// Workspace
+// ─────────────────────────────────────────────
+
+enum WorkspaceType {
+  OFFICE
+  FREELANCE
+  PERSONAL
+  OPEN_SOURCE
+}
+
+model Workspace {
+  id          String        @id @default(cuid())
+  name        String
+  type        WorkspaceType @default(PERSONAL)
+  description String?
+  createdAt   DateTime      @default(now())
+  updatedAt   DateTime      @updatedAt
+
+  clients  Client[]
+  projects Project[]
+
+  @@map("workspaces")
+}
+
+// ─────────────────────────────────────────────
+// Client
+// ─────────────────────────────────────────────
+
+model Client {
+  id          String   @id @default(cuid())
+  name        String
+  email       String?
+  company     String?
+  notes       String?
+  workspaceId String
+  createdAt   DateTime @default(now())
+  updatedAt   DateTime @updatedAt
+
+  workspace Workspace @relation(fields: [workspaceId], references: [id], onDelete: Cascade)
+  projects  Project[]
+
+  @@map("clients")
+}
+
+// ─────────────────────────────────────────────
+// Project
+// ─────────────────────────────────────────────
+
+enum ProjectStatus {
+  PLANNING
+  ACTIVE
+  ON_HOLD
+  COMPLETED
+  ARCHIVED
+}
+
+model Project {
+  id            String        @id @default(cuid())
+  name          String
+  description   String?
+  status        ProjectStatus @default(PLANNING)
+  repositoryUrl String?
+  workspaceId   String
+  clientId      String?
+  startDate     DateTime?
+  endDate       DateTime?
+  createdAt     DateTime      @default(now())
+  updatedAt     DateTime      @updatedAt
+
+  workspace   Workspace       @relation(fields: [workspaceId], references: [id], onDelete: Cascade)
+  client      Client?         @relation(fields: [clientId], references: [id], onDelete: SetNull)
+  sprints     Sprint[]
+  features    Feature[]
+  tasks       Task[]
+  activities  DailyActivity[]
+  deployments Deployment[]
+
+  @@map("projects")
+}
+
+// ─────────────────────────────────────────────
+// Sprint
+// ─────────────────────────────────────────────
+
+enum SprintStatus {
+  PLANNED
+  ACTIVE
+  COMPLETED
+}
+
+model Sprint {
+  id        String       @id @default(cuid())
+  name      String
+  goal      String?
+  status    SprintStatus @default(PLANNED)
+  startDate DateTime
+  endDate   DateTime
+  projectId String
+  createdAt DateTime     @default(now())
+  updatedAt DateTime     @updatedAt
+
+  project  Project   @relation(fields: [projectId], references: [id], onDelete: Cascade)
+  features Feature[]
+  tasks    Task[]
+
+  @@map("sprints")
+}
+
+// ─────────────────────────────────────────────
+// Feature
+// ─────────────────────────────────────────────
+
+enum FeatureStatus {
+  IDEA
+  PLANNED
+  IN_PROGRESS
+  TESTING
+  DONE
+  ARCHIVED
+}
+
+enum Priority {
+  LOW
+  MEDIUM
+  HIGH
+  URGENT
+}
+
+model Feature {
+  id        String        @id @default(cuid())
+  name      String
+  summary   String?
+  status    FeatureStatus @default(IDEA)
+  priority  Priority      @default(MEDIUM)
+  progress  Int           @default(0) // 0–100
+  projectId String
+  sprintId  String?
+  createdAt DateTime      @default(now())
+  updatedAt DateTime      @updatedAt
+
+  project Project @relation(fields: [projectId], references: [id], onDelete: Cascade)
+  sprint  Sprint? @relation(fields: [sprintId], references: [id], onDelete: SetNull)
+  tasks   Task[]
+
+  @@map("features")
+}
+
+// ─────────────────────────────────────────────
+// Task
+// ─────────────────────────────────────────────
+
+enum TaskType {
+  DEVELOPMENT
+  BUG
+  RESEARCH
+  MEETING
+  DOCUMENTATION
+  TESTING
+  DEPLOYMENT
+}
+
+enum TaskStatus {
+  BACKLOG
+  PLANNING
+  READY
+  DEVELOPMENT
+  REVIEW
+  TESTING
+  DONE
+  ARCHIVED
+}
+
+model Task {
+  id          String     @id @default(cuid())
+  title       String
+  description String?
+  type        TaskType   @default(DEVELOPMENT)
+  status      TaskStatus @default(BACKLOG)
+  priority    Priority   @default(MEDIUM)
+  dueDate     DateTime?
+  // External integration IDs (ClickUp sync — store IDs, never duplicate remote data)
+  clickupId   String?    @unique
+  gitBranch   String?
+  projectId   String?
+  featureId   String?
+  sprintId    String?
+  createdAt   DateTime   @default(now())
+  updatedAt   DateTime   @updatedAt
+
+  project Project? @relation(fields: [projectId], references: [id], onDelete: SetNull)
+  feature Feature? @relation(fields: [featureId], references: [id], onDelete: SetNull)
+  sprint  Sprint?  @relation(fields: [sprintId], references: [id], onDelete: SetNull)
+
+  @@map("tasks")
+}
+
+// ─────────────────────────────────────────────
+// Daily Activity
+// ─────────────────────────────────────────────
+
+enum ActivityCategory {
+  CODING
+  MEETING
+  LEARNING
+  READING
+  RESEARCH
+  WORKOUT
+  WRITING
+  GAMING
+  OTHER
+}
+
+model DailyActivity {
+  id           String           @id @default(cuid())
+  title        String
+  category     ActivityCategory @default(CODING)
+  date         DateTime         @default(now())
+  durationMin  Int // duration in minutes
+  notes        String?
+  mood         Int? // 1–5
+  productivity Int? // 1–5
+  projectId    String?
+  createdAt    DateTime         @default(now())
+  updatedAt    DateTime         @updatedAt
+
+  project Project? @relation(fields: [projectId], references: [id], onDelete: SetNull)
+
+  @@index([date])
+  @@map("daily_activities")
+}
+
+// ─────────────────────────────────────────────
+// Deployment
+// ─────────────────────────────────────────────
+
+enum DeployEnvironment {
+  LOCAL
+  DEVELOPMENT
+  STAGING
+  PRODUCTION
+}
+
+model Deployment {
+  id           String            @id @default(cuid())
+  version      String
+  environment  DeployEnvironment
+  commitHash   String?
+  releaseNotes String?
+  success      Boolean           @default(true)
+  rolledBack   Boolean           @default(false)
+  deployedAt   DateTime          @default(now())
+  projectId    String
+  createdAt    DateTime          @default(now())
+  updatedAt    DateTime          @updatedAt
+
+  project Project @relation(fields: [projectId], references: [id], onDelete: Cascade)
+
+  @@index([deployedAt])
+  @@map("deployments")
+}
+
+// ─────────────────────────────────────────────
+// Journal
+// ─────────────────────────────────────────────
+
+enum JournalType {
+  MORNING
+  NIGHT
+}
+
+model JournalEntry {
+  id         String      @id @default(cuid())
+  type       JournalType
+  date       DateTime    @default(now())
+  // Morning
+  goals      String?
+  focus      String?
+  // Night
+  reflection String?
+  wins       String?
+  problems   String?
+  lessons    String?
+  tomorrow   String?
+  createdAt  DateTime    @default(now())
+  updatedAt  DateTime    @updatedAt
+
+  @@index([date])
+  @@map("journal_entries")
+}
+
+// ─────────────────────────────────────────────
+// Habits
+// ─────────────────────────────────────────────
+
+model Habit {
+  id          String   @id @default(cuid())
+  name        String
+  description String?
+  targetDays  Int      @default(7) // target days per week
+  isActive    Boolean  @default(true)
+  createdAt   DateTime @default(now())
+  updatedAt   DateTime @updatedAt
+
+  logs HabitLog[]
+
+  @@map("habits")
+}
+
+model HabitLog {
+  id        String   @id @default(cuid())
+  habitId   String
+  date      DateTime @default(now())
+  completed Boolean  @default(true)
+  notes     String?
+  createdAt DateTime @default(now())
+  updatedAt DateTime @updatedAt
+
+  habit Habit @relation(fields: [habitId], references: [id], onDelete: Cascade)
+
+  @@unique([habitId, date])
+  @@map("habit_logs")
+}
