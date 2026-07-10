@@ -1,6 +1,6 @@
 # Phase 03 — Authentication
 
-**Status:** 🔜 Next
+**Status:** ✅ Done (2026-07-10)
 
 ## Goal
 
@@ -22,12 +22,18 @@ tokens for external services.
 
 ## Acceptance criteria
 
-- [ ] Unauthenticated requests to any page redirect to `/login`
-- [ ] Server actions reject unauthenticated calls (defense in depth, not just middleware)
-- [ ] Session persists across restarts; sign-out works
-- [ ] Sign-up endpoint disabled/guarded after first user
+- [x] Unauthenticated requests to any page redirect to `/login` (middleware 307 + server-side check in `(app)` layout)
+- [x] Server actions reject unauthenticated calls (guard in all 20 actions; verified no row created)
+- [x] Session cookie (httpOnly, sameSite=lax, 7 days); sign-out in sidebar footer
+- [x] Sign-up returns 403 after first user (databaseHooks user.create.before)
 
-## Notes
+## Implementation notes
 
-Better Auth was chosen in root CLAUDE.md. Keep the auth surface minimal —
-protecting a personal deployment, not building a user system.
+- Better Auth 1.6 + Prisma adapter; auth tables in migration `20260710154959_auth`.
+- Routes restructured: protected pages live in the `app/(app)` group whose
+  layout validates the session server-side; `/login` is a bare route with a
+  Sign in / First-time setup tabbed form.
+- `middleware.ts` does an optimistic cookie check only — real validation is
+  `getSession()` (lib/require-auth.ts) in the layout and inside every action.
+- First-time setup: while `users` is empty, the sign-up tab creates the single
+  owner account; afterwards it is permanently blocked (403).

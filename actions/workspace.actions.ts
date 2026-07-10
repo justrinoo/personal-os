@@ -8,6 +8,7 @@ import {
   updateWorkspace,
 } from "@/repositories/workspace.repository";
 import { workspaceSchema, type WorkspaceInput } from "@/schemas/workspace.schema";
+import { isAuthenticated } from "@/lib/require-auth";
 import { ACTION_OK, actionError, type ActionResult } from "@/types/action";
 import { emptyToNull } from "@/utils/normalize";
 
@@ -20,6 +21,7 @@ function revalidate() {
 export async function createWorkspaceAction(
   input: WorkspaceInput
 ): Promise<ActionResult> {
+  if (!(await isAuthenticated())) return actionError("Unauthorized");
   const parsed = workspaceSchema.safeParse(input);
   if (!parsed.success) {
     return actionError(parsed.error.issues[0]?.message ?? "Invalid input");
@@ -41,6 +43,7 @@ export async function updateWorkspaceAction(
   id: string,
   input: WorkspaceInput
 ): Promise<ActionResult> {
+  if (!(await isAuthenticated())) return actionError("Unauthorized");
   const parsed = workspaceSchema.safeParse(input);
   if (!parsed.success) {
     return actionError(parsed.error.issues[0]?.message ?? "Invalid input");
@@ -59,6 +62,7 @@ export async function updateWorkspaceAction(
 }
 
 export async function deleteWorkspaceAction(id: string): Promise<ActionResult> {
+  if (!(await isAuthenticated())) return actionError("Unauthorized");
   try {
     await deleteWorkspace(id);
     revalidate();

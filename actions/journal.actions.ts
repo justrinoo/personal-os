@@ -7,6 +7,7 @@ import {
   deleteJournalEntry,
 } from "@/repositories/journal.repository";
 import { journalSchema, type JournalInput } from "@/schemas/journal.schema";
+import { isAuthenticated } from "@/lib/require-auth";
 import { ACTION_OK, actionError, type ActionResult } from "@/types/action";
 import { emptyToNull } from "@/utils/normalize";
 
@@ -18,6 +19,7 @@ function revalidate() {
 export async function createJournalEntryAction(
   input: JournalInput
 ): Promise<ActionResult> {
+  if (!(await isAuthenticated())) return actionError("Unauthorized");
   const parsed = journalSchema.safeParse(input);
   if (!parsed.success) {
     return actionError(parsed.error.issues[0]?.message ?? "Invalid input");
@@ -45,6 +47,7 @@ export async function createJournalEntryAction(
 export async function deleteJournalEntryAction(
   id: string
 ): Promise<ActionResult> {
+  if (!(await isAuthenticated())) return actionError("Unauthorized");
   try {
     await deleteJournalEntry(id);
     revalidate();

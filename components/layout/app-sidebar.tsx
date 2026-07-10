@@ -1,13 +1,16 @@
 "use client";
 
 import Link from "next/link";
-import { usePathname } from "next/navigation";
-import { Terminal } from "lucide-react";
+import { usePathname, useRouter } from "next/navigation";
+import { LogOut, Terminal } from "lucide-react";
 
 import { NAV_SECTIONS } from "@/constants/navigation";
+import { authClient } from "@/lib/auth-client";
+import { Button } from "@/components/ui/button";
 import {
   Sidebar,
   SidebarContent,
+  SidebarFooter,
   SidebarGroup,
   SidebarGroupContent,
   SidebarGroupLabel,
@@ -17,8 +20,22 @@ import {
   SidebarMenuItem,
 } from "@/components/ui/sidebar";
 
-export function AppSidebar() {
+interface AppSidebarProps {
+  user: {
+    name: string;
+    email: string;
+  };
+}
+
+export function AppSidebar({ user }: AppSidebarProps) {
   const pathname = usePathname();
+  const router = useRouter();
+
+  async function handleSignOut() {
+    await authClient.signOut();
+    router.push("/login");
+    router.refresh();
+  }
 
   return (
     <Sidebar>
@@ -59,6 +76,24 @@ export function AppSidebar() {
           </SidebarGroup>
         ))}
       </SidebarContent>
+      <SidebarFooter>
+        <div className="flex items-center justify-between gap-2 px-2 py-1.5">
+          <div className="flex min-w-0 flex-col leading-tight">
+            <span className="truncate text-sm font-medium">{user.name}</span>
+            <span className="truncate text-xs text-muted-foreground">
+              {user.email}
+            </span>
+          </div>
+          <Button
+            variant="ghost"
+            size="icon-sm"
+            aria-label="Sign out"
+            onClick={handleSignOut}
+          >
+            <LogOut className="size-4 text-muted-foreground" />
+          </Button>
+        </div>
+      </SidebarFooter>
     </Sidebar>
   );
 }

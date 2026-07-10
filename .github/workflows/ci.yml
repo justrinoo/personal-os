@@ -14,6 +14,8 @@ jobs:
       # Build never connects to a database (pages are force-dynamic),
       # but Prisma config requires the variable to be present.
       DATABASE_URL: postgresql://ci:ci@localhost:5432/ci
+      BETTER_AUTH_SECRET: ci-only-secret-not-used-at-runtime
+      BETTER_AUTH_URL: http://localhost:3000
     steps:
       - uses: actions/checkout@v4
 

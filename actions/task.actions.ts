@@ -9,6 +9,7 @@ import {
   type TaskData,
 } from "@/repositories/task.repository";
 import { taskSchema, type TaskInput } from "@/schemas/task.schema";
+import { isAuthenticated } from "@/lib/require-auth";
 import { ACTION_OK, actionError, type ActionResult } from "@/types/action";
 import { emptyToNull } from "@/utils/normalize";
 
@@ -31,6 +32,7 @@ function toTaskData(input: TaskInput): TaskData {
 }
 
 export async function createTaskAction(input: TaskInput): Promise<ActionResult> {
+  if (!(await isAuthenticated())) return actionError("Unauthorized");
   const parsed = taskSchema.safeParse(input);
   if (!parsed.success) {
     return actionError(parsed.error.issues[0]?.message ?? "Invalid input");
@@ -48,6 +50,7 @@ export async function updateTaskAction(
   id: string,
   input: TaskInput
 ): Promise<ActionResult> {
+  if (!(await isAuthenticated())) return actionError("Unauthorized");
   const parsed = taskSchema.safeParse(input);
   if (!parsed.success) {
     return actionError(parsed.error.issues[0]?.message ?? "Invalid input");
@@ -62,6 +65,7 @@ export async function updateTaskAction(
 }
 
 export async function deleteTaskAction(id: string): Promise<ActionResult> {
+  if (!(await isAuthenticated())) return actionError("Unauthorized");
   try {
     await deleteTask(id);
     revalidate();

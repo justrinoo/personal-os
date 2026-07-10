@@ -7,8 +7,8 @@ work is committed. Details per phase live in [roadmap/](./roadmap/).
 |---|---|---|---|
 | 01 | [Foundation](./roadmap/phase-01-foundation.md) | ✅ Done | 2026-07-10 |
 | 02 | [Core CRUD](./roadmap/phase-02-core-crud.md) | ✅ Done | 2026-07-10 |
-| 03 | [Authentication](./roadmap/phase-03-auth.md) | 🔜 Next | — |
-| 04 | [ClickUp Integration](./roadmap/phase-04-clickup.md) | Planned | — |
+| 03 | [Authentication](./roadmap/phase-03-auth.md) | ✅ Done | 2026-07-10 |
+| 04 | [ClickUp Integration](./roadmap/phase-04-clickup.md) | 🔜 Next | — |
 | 05 | [GitHub Integration](./roadmap/phase-05-github.md) | Planned | — |
 | 06 | [Deployment Tracking](./roadmap/phase-06-deployment.md) | Planned | — |
 | 07 | [Monitoring](./roadmap/phase-07-monitoring.md) | Planned | — |

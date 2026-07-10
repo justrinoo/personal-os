@@ -9,6 +9,7 @@ import {
   type ActivityData,
 } from "@/repositories/activity.repository";
 import { activitySchema, type ActivityInput } from "@/schemas/activity.schema";
+import { isAuthenticated } from "@/lib/require-auth";
 import { ACTION_OK, actionError, type ActionResult } from "@/types/action";
 import { emptyToNull, ratingToNumber } from "@/utils/normalize";
 
@@ -33,6 +34,7 @@ function toActivityData(input: ActivityInput): ActivityData {
 export async function createActivityAction(
   input: ActivityInput
 ): Promise<ActionResult> {
+  if (!(await isAuthenticated())) return actionError("Unauthorized");
   const parsed = activitySchema.safeParse(input);
   if (!parsed.success) {
     return actionError(parsed.error.issues[0]?.message ?? "Invalid input");
@@ -50,6 +52,7 @@ export async function updateActivityAction(
   id: string,
   input: ActivityInput
 ): Promise<ActionResult> {
+  if (!(await isAuthenticated())) return actionError("Unauthorized");
   const parsed = activitySchema.safeParse(input);
   if (!parsed.success) {
     return actionError(parsed.error.issues[0]?.message ?? "Invalid input");
@@ -64,6 +67,7 @@ export async function updateActivityAction(
 }
 
 export async function deleteActivityAction(id: string): Promise<ActionResult> {
+  if (!(await isAuthenticated())) return actionError("Unauthorized");
   try {
     await deleteActivity(id);
     revalidate();

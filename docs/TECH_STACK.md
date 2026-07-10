@@ -29,11 +29,16 @@ Versions reflect `package.json` at the time of writing.
 | Driver | `@prisma/adapter-pg` | Required by Prisma 7 |
 | Config | `prisma.config.ts` + `dotenv` | Connection URL from `DATABASE_URL` in `.env` |
 
+## Auth
+
+| Concern | Technology | Notes |
+|---|---|---|
+| Auth | Better Auth 1.6 | Email/password, single owner, Prisma adapter; guards in middleware + layout + every action |
+
 ## Planned
 
 | Concern | Technology | Phase |
 |---|---|---|
-| Auth | Better Auth | 03 |
 | File storage | Supabase Storage | later |
 | Deployment | Docker + Coolify | 06 |
 | Monitoring | Uptime Kuma, Prometheus, Grafana | 07 |

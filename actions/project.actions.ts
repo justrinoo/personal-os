@@ -9,6 +9,7 @@ import {
   type ProjectData,
 } from "@/repositories/project.repository";
 import { projectSchema, type ProjectInput } from "@/schemas/project.schema";
+import { isAuthenticated } from "@/lib/require-auth";
 import { ACTION_OK, actionError, type ActionResult } from "@/types/action";
 import { emptyToNull } from "@/utils/normalize";
 
@@ -32,6 +33,7 @@ function toProjectData(input: ProjectInput): ProjectData {
 export async function createProjectAction(
   input: ProjectInput
 ): Promise<ActionResult> {
+  if (!(await isAuthenticated())) return actionError("Unauthorized");
   const parsed = projectSchema.safeParse(input);
   if (!parsed.success) {
     return actionError(parsed.error.issues[0]?.message ?? "Invalid input");
@@ -49,6 +51,7 @@ export async function updateProjectAction(
   id: string,
   input: ProjectInput
 ): Promise<ActionResult> {
+  if (!(await isAuthenticated())) return actionError("Unauthorized");
   const parsed = projectSchema.safeParse(input);
   if (!parsed.success) {
     return actionError(parsed.error.issues[0]?.message ?? "Invalid input");
@@ -63,6 +66,7 @@ export async function updateProjectAction(
 }
 
 export async function deleteProjectAction(id: string): Promise<ActionResult> {
+  if (!(await isAuthenticated())) return actionError("Unauthorized");
   try {
     await deleteProject(id);
     revalidate();

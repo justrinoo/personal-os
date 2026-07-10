@@ -9,6 +9,7 @@ import {
   updateHabit,
 } from "@/repositories/habit.repository";
 import { habitSchema, type HabitInput } from "@/schemas/habit.schema";
+import { isAuthenticated } from "@/lib/require-auth";
 import { ACTION_OK, actionError, type ActionResult } from "@/types/action";
 import { emptyToNull } from "@/utils/normalize";
 
@@ -20,6 +21,7 @@ function revalidate() {
 export async function createHabitAction(
   input: HabitInput
 ): Promise<ActionResult> {
+  if (!(await isAuthenticated())) return actionError("Unauthorized");
   const parsed = habitSchema.safeParse(input);
   if (!parsed.success) {
     return actionError(parsed.error.issues[0]?.message ?? "Invalid input");
@@ -41,6 +43,7 @@ export async function updateHabitAction(
   id: string,
   input: HabitInput
 ): Promise<ActionResult> {
+  if (!(await isAuthenticated())) return actionError("Unauthorized");
   const parsed = habitSchema.safeParse(input);
   if (!parsed.success) {
     return actionError(parsed.error.issues[0]?.message ?? "Invalid input");
@@ -59,6 +62,7 @@ export async function updateHabitAction(
 }
 
 export async function deleteHabitAction(id: string): Promise<ActionResult> {
+  if (!(await isAuthenticated())) return actionError("Unauthorized");
   try {
     await deleteHabit(id);
     revalidate();
@@ -71,6 +75,7 @@ export async function deleteHabitAction(id: string): Promise<ActionResult> {
 export async function toggleHabitTodayAction(
   habitId: string
 ): Promise<ActionResult> {
+  if (!(await isAuthenticated())) return actionError("Unauthorized");
   try {
     await toggleHabitToday(habitId);
     revalidate();

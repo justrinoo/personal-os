@@ -3,11 +3,15 @@
 Single-user personal app — the goal is protecting a personal deployment and
 its API tokens, not building a permission system.
 
-## Current posture (pre-auth)
+## Current posture
 
-- Runs locally only. **Do not deploy publicly before Phase 03 (Better Auth).**
+- **Better Auth is live (Phase 03):** email/password, single owner account,
+  session cookies (httpOnly, sameSite=lax). Three layers: middleware redirect
+  (optimistic cookie check) → server-side `getSession()` in the `(app)` layout
+  → guard inside every server action. Sign-up returns 403 once an owner exists.
 - `.env` is gitignored (`.env*` with `!.env.example`); verified on every commit
   that no secret is staged. `.env.example` contains placeholders only.
+  Secrets: `DATABASE_URL`, `BETTER_AUTH_SECRET` (64-hex random), `BETTER_AUTH_URL`.
 - Database credentials exist only in `.env`; Supabase connection uses TLS.
 
 ## Input handling
@@ -19,14 +23,11 @@ its API tokens, not building a permission system.
 - Server actions return typed errors; internal error details are never sent to
   the client (generic messages + server-side logs).
 
-## Planned (Phase 03+)
+## Planned
 
-- Better Auth: session cookies (httpOnly, secure, sameSite=lax), middleware
-  gating all routes, **auth check inside every server action** (defense in
-  depth — middleware alone is not enough for actions).
-- Sign-up disabled after the first account.
+- `secure` cookie flag + HTTPS once deployed (Phase 06).
 - Webhook endpoints authenticated by shared secret; integration tokens
-  scoped read-only where the provider allows.
+  scoped read-only where the provider allows (Phases 04–07).
 
 ## Data
 

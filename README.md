@@ -20,9 +20,14 @@ cp .env.example .env   # then edit DATABASE_URL
 # 3. Create the schema
 npx prisma migrate dev --name init
 
-# 4. Run
+# 4. Set auth secrets in .env (see .env.example)
+
+# 5. Run
 npm run dev
 ```
+
+On first run, open /login and use the **First-time setup** tab to create the
+single owner account — sign-up locks permanently afterwards.
 
 The app renders without a database (empty states + offline banner), so you can
 explore the UI before setting up PostgreSQL.
