@@ -1,15 +1,19 @@
 import type { Metadata } from "next";
-import { BookOpen, Moon, Sun } from "lucide-react";
+import { BookOpen, Moon, Plus, Sun } from "lucide-react";
 
+import { deleteJournalEntryAction } from "@/actions/journal.actions";
 import { PageHeader } from "@/components/layout/page-header";
 import { DbOfflineBanner } from "@/components/shared/db-offline-banner";
+import { DeleteButton } from "@/components/shared/delete-button";
 import { EmptyState } from "@/components/shared/empty-state";
+import { Button } from "@/components/ui/button";
 import {
   Card,
   CardContent,
   CardHeader,
   CardTitle,
 } from "@/components/ui/card";
+import { JournalFormDialog } from "@/features/journal/components/journal-form-dialog";
 import { safeQuery } from "@/lib/safe-query";
 import { listJournalEntries } from "@/repositories/journal.repository";
 import { formatDate } from "@/utils/format";
@@ -31,7 +35,16 @@ export default async function JournalPage() {
       <PageHeader
         title="Journal"
         description="Morning intentions and night reflections"
-      />
+      >
+        <JournalFormDialog
+          trigger={
+            <Button size="sm">
+              <Plus className="size-4" />
+              New Entry
+            </Button>
+          }
+        />
+      </PageHeader>
       <main className="flex flex-col gap-6 p-4 md:p-6">
         {!entries.ok ? <DbOfflineBanner /> : null}
 
@@ -61,15 +74,22 @@ export default async function JournalPage() {
               return (
                 <Card key={entry.id}>
                   <CardHeader>
-                    <CardTitle className="flex items-center gap-2 text-base">
-                      {entry.type === "MORNING" ? (
-                        <Sun className="size-4 text-amber-500" />
-                      ) : (
-                        <Moon className="size-4 text-indigo-400" />
-                      )}
-                      {entry.type === "MORNING" ? "Morning" : "Night"} ·{" "}
-                      {formatDate(entry.date)}
-                    </CardTitle>
+                    <div className="flex items-start justify-between gap-2">
+                      <CardTitle className="flex items-center gap-2 text-base">
+                        {entry.type === "MORNING" ? (
+                          <Sun className="size-4 text-amber-500" />
+                        ) : (
+                          <Moon className="size-4 text-indigo-400" />
+                        )}
+                        {entry.type === "MORNING" ? "Morning" : "Night"} ·{" "}
+                        {formatDate(entry.date)}
+                      </CardTitle>
+                      <DeleteButton
+                        action={deleteJournalEntryAction.bind(null, entry.id)}
+                        title="Delete journal entry?"
+                        description="This entry will be permanently removed."
+                      />
+                    </div>
                   </CardHeader>
                   <CardContent className="flex flex-col gap-3">
                     {fields

@@ -1,13 +1,18 @@
 import type { Metadata } from "next";
-import { Activity } from "lucide-react";
+import { Activity, Plus } from "lucide-react";
 
+import { deleteActivityAction } from "@/actions/activity.actions";
 import { PageHeader } from "@/components/layout/page-header";
 import { DbOfflineBanner } from "@/components/shared/db-offline-banner";
+import { DeleteButton } from "@/components/shared/delete-button";
 import { EmptyState } from "@/components/shared/empty-state";
 import { Badge } from "@/components/ui/badge";
+import { Button } from "@/components/ui/button";
 import { Card, CardContent } from "@/components/ui/card";
+import { ActivityFormDialog } from "@/features/activities/components/activity-form-dialog";
 import { safeQuery } from "@/lib/safe-query";
 import { listActivities } from "@/repositories/activity.repository";
+import { listProjectOptions } from "@/repositories/project.repository";
 import {
   formatDateTime,
   formatEnumLabel,
@@ -19,14 +24,27 @@ export const metadata: Metadata = { title: "Activities" };
 export const dynamic = "force-dynamic";
 
 export default async function ActivitiesPage() {
-  const activities = await safeQuery(() => listActivities(), []);
+  const [activities, projects] = await Promise.all([
+    safeQuery(() => listActivities(), []),
+    safeQuery(() => listProjectOptions(), []),
+  ]);
 
   return (
     <>
       <PageHeader
         title="Daily Activities"
         description="Everything you do — coding, meetings, learning, and more"
-      />
+      >
+        <ActivityFormDialog
+          projects={projects.data}
+          trigger={
+            <Button size="sm">
+              <Plus className="size-4" />
+              Log Activity
+            </Button>
+          }
+        />
+      </PageHeader>
       <main className="flex flex-col gap-6 p-4 md:p-6">
         {!activities.ok ? <DbOfflineBanner /> : null}
 
@@ -61,6 +79,11 @@ export default async function ActivitiesPage() {
                       <span className="text-sm text-muted-foreground tabular-nums">
                         {formatMinutes(activity.durationMin)}
                       </span>
+                      <DeleteButton
+                        action={deleteActivityAction.bind(null, activity.id)}
+                        title="Delete activity?"
+                        description={`"${activity.title}" will be permanently removed.`}
+                      />
                     </div>
                   </li>
                 ))}

@@ -1,6 +1,7 @@
 import {
   Activity,
   BookOpen,
+  Boxes,
   CalendarCheck,
   FolderKanban,
   LayoutDashboard,
@@ -27,6 +28,7 @@ export const NAV_SECTIONS: NavSection[] = [
   {
     label: "Work",
     items: [
+      { title: "Workspaces", href: "/workspaces", icon: Boxes },
       { title: "Projects", href: "/projects", icon: FolderKanban },
       { title: "Tasks", href: "/tasks", icon: ListTodo },
       { title: "Activities", href: "/activities", icon: Activity },

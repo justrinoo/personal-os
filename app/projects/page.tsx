@@ -1,10 +1,13 @@
 import type { Metadata } from "next";
-import { FolderKanban } from "lucide-react";
+import { FolderKanban, Pencil, Plus } from "lucide-react";
 
+import { deleteProjectAction } from "@/actions/project.actions";
 import { PageHeader } from "@/components/layout/page-header";
 import { DbOfflineBanner } from "@/components/shared/db-offline-banner";
+import { DeleteButton } from "@/components/shared/delete-button";
 import { EmptyState } from "@/components/shared/empty-state";
 import { StatusBadge } from "@/components/shared/status-badge";
+import { Button } from "@/components/ui/button";
 import {
   Table,
   TableBody,
@@ -13,8 +16,10 @@ import {
   TableHeader,
   TableRow,
 } from "@/components/ui/table";
+import { ProjectFormDialog } from "@/features/projects/components/project-form-dialog";
 import { safeQuery } from "@/lib/safe-query";
 import { listProjects } from "@/repositories/project.repository";
+import { listWorkspaceOptions } from "@/repositories/workspace.repository";
 import { formatDate } from "@/utils/format";
 
 export const metadata: Metadata = { title: "Projects" };
@@ -22,14 +27,27 @@ export const metadata: Metadata = { title: "Projects" };
 export const dynamic = "force-dynamic";
 
 export default async function ProjectsPage() {
-  const projects = await safeQuery(() => listProjects(), []);
+  const [projects, workspaces] = await Promise.all([
+    safeQuery(() => listProjects(), []),
+    safeQuery(() => listWorkspaceOptions(), []),
+  ]);
 
   return (
     <>
       <PageHeader
         title="Projects"
         description="Every software project across your workspaces"
-      />
+      >
+        <ProjectFormDialog
+          workspaces={workspaces.data}
+          trigger={
+            <Button size="sm">
+              <Plus className="size-4" />
+              New Project
+            </Button>
+          }
+        />
+      </PageHeader>
       <main className="flex flex-col gap-6 p-4 md:p-6">
         {!projects.ok ? <DbOfflineBanner /> : null}
 
@@ -51,6 +69,7 @@ export default async function ProjectsPage() {
                   <TableHead className="text-right">Tasks</TableHead>
                   <TableHead className="text-right">Features</TableHead>
                   <TableHead className="text-right">Updated</TableHead>
+                  <TableHead className="w-20" />
                 </TableRow>
               </TableHeader>
               <TableBody>
@@ -74,6 +93,28 @@ export default async function ProjectsPage() {
                     </TableCell>
                     <TableCell className="text-right text-muted-foreground">
                       {formatDate(project.updatedAt)}
+                    </TableCell>
+                    <TableCell>
+                      <div className="flex items-center justify-end">
+                        <ProjectFormDialog
+                          workspaces={workspaces.data}
+                          project={project}
+                          trigger={
+                            <Button
+                              variant="ghost"
+                              size="icon-sm"
+                              aria-label="Edit project"
+                            >
+                              <Pencil className="size-4 text-muted-foreground" />
+                            </Button>
+                          }
+                        />
+                        <DeleteButton
+                          action={deleteProjectAction.bind(null, project.id)}
+                          title="Delete project?"
+                          description={`"${project.name}" and its sprints, features, tasks, and deployments will be permanently removed.`}
+                        />
+                      </div>
                     </TableCell>
                   </TableRow>
                 ))}
