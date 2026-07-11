@@ -135,4 +135,5 @@ Implemented on Tasks, Projects, ClickUp; reuse for every future table.
 | 2026-07-10 | shadcn neutral defaults | Phase 1 speed |
 | 2026-07-11 | "Soft Clay Garden" — green neumorphism, Quicksand+Nunito | owner brief |
 | 2026-07-11 | "Midnight Harbor" — navy dark-first, Space Grotesk+Jakarta | owner brief + table filtering |
-| 2026-07-11 | **FitFlow** (DESIGN.md via NeedMCP) — gold on warm beige, Inter+JetBrains Mono, light-first | owner adopted NeedMCP style |
+| 2026-07-11 | **FitFlow** (Design.md via NeedMCP) — gold on warm beige, Inter+JetBrains Mono, light-first | owner adopted NeedMCP style |
+| 2026-07-11 | 🔒 **FitFlow LOCKED** as the project style | owner decision — no theme changes without explicit request (see CLAUDE.md → UI Principles) |

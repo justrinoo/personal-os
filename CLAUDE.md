@@ -510,6 +510,20 @@ Never duplicate data if relationships exist.
 
 # UI Principles
 
+## Design System — FitFlow (LOCKED)
+
+The visual style of this project is **locked to FitFlow**, defined in
+[Design.md](./Design.md) (managed by NeedMCP) and mapped to the codebase in
+[docs/architecture/ui-system.md](./docs/architecture/ui-system.md).
+
+Rules:
+
+- Do **not** change palettes, fonts, radii, or the elevation system unless
+  the owner explicitly asks for a style change.
+- All new UI must use the tokens in `app/globals.css` — never raw hex values.
+- If Design.md changes (owner runs `needmcp style set <slug>`), re-map tokens
+  per ui-system.md and log the change in its theme evolution log.
+
 Design should be:
 
 - Modern
