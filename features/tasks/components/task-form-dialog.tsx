@@ -41,6 +41,7 @@ interface TaskFormDialogProps {
     priority: TaskInput["priority"];
     dueDate: Date | null;
     projectId: string | null;
+    gitBranch: string | null;
   };
   trigger: React.ReactNode;
 }
@@ -63,6 +64,7 @@ export function TaskFormDialog({ projects, task, trigger }: TaskFormDialogProps)
       priority: task?.priority ?? "MEDIUM",
       dueDate: task?.dueDate ? task.dueDate.toISOString().slice(0, 10) : "",
       projectId: task?.projectId ?? "",
+      gitBranch: task?.gitBranch ?? "",
     },
   });
 
@@ -161,9 +163,19 @@ export function TaskFormDialog({ projects, task, trigger }: TaskFormDialogProps)
               />
             </div>
           </div>
-          <div className="flex flex-col gap-2">
-            <Label htmlFor="task-due">Due date</Label>
-            <Input id="task-due" type="date" {...register("dueDate")} />
+          <div className="grid gap-4 sm:grid-cols-2">
+            <div className="flex flex-col gap-2">
+              <Label htmlFor="task-due">Due date</Label>
+              <Input id="task-due" type="date" {...register("dueDate")} />
+            </div>
+            <div className="flex flex-col gap-2">
+              <Label htmlFor="task-branch">Git branch</Label>
+              <Input
+                id="task-branch"
+                {...register("gitBranch")}
+                placeholder="feature/my-branch"
+              />
+            </div>
           </div>
           <div className="flex flex-col gap-2">
             <Label htmlFor="task-description">Description</Label>

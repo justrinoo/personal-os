@@ -157,8 +157,70 @@ model Project {
   tasks       Task[]
   activities  DailyActivity[]
   deployments Deployment[]
+  repository  Repository?
 
   @@map("projects")
+}
+
+// ─────────────────────────────────────────────
+// GitHub integration (read-only sync, external-ID keyed)
+// ─────────────────────────────────────────────
+
+model Repository {
+  id            String    @id @default(cuid())
+  owner         String
+  name          String
+  fullName      String    @unique // "owner/name"
+  url           String
+  defaultBranch String?
+  syncedAt      DateTime?
+  projectId     String    @unique
+  createdAt     DateTime  @default(now())
+  updatedAt     DateTime  @updatedAt
+
+  project      Project       @relation(fields: [projectId], references: [id], onDelete: Cascade)
+  commits      Commit[]
+  pullRequests PullRequest[]
+
+  @@map("repositories")
+}
+
+model Commit {
+  id           String   @id @default(cuid())
+  sha          String   @unique
+  message      String // first line only
+  authorName   String?
+  authorLogin  String?
+  committedAt  DateTime
+  url          String
+  repositoryId String
+  createdAt    DateTime @default(now())
+  updatedAt    DateTime @updatedAt
+
+  repository Repository @relation(fields: [repositoryId], references: [id], onDelete: Cascade)
+
+  @@map("commits")
+}
+
+model PullRequest {
+  id           String    @id @default(cuid())
+  number       Int
+  title        String
+  state        String // open | closed | merged
+  authorLogin  String?
+  headBranch   String?
+  url          String
+  openedAt     DateTime
+  mergedAt     DateTime?
+  closedAt     DateTime?
+  repositoryId String
+  createdAt    DateTime  @default(now())
+  updatedAt    DateTime  @updatedAt
+
+  repository Repository @relation(fields: [repositoryId], references: [id], onDelete: Cascade)
+
+  @@unique([repositoryId, number])
+  @@map("pull_requests")
 }
 
 // ─────────────────────────────────────────────

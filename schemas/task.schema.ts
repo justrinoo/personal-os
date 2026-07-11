@@ -12,6 +12,8 @@ export const taskSchema = z.object({
   dueDate: z.string().optional(),
   // Empty string means "no project".
   projectId: z.string().optional(),
+  // Git branch this task is developed on (links PRs by head branch).
+  gitBranch: z.string().max(200).optional(),
 });
 
 export type TaskInput = z.infer<typeof taskSchema>;

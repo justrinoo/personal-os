@@ -1,6 +1,6 @@
 # Phase 05 — GitHub Integration
 
-**Status:** Planned
+**Status:** ✅ Done (2026-07-11)
 
 ## Goal
 
@@ -22,6 +22,24 @@ appear on the project timeline and can be linked to tasks.
 
 ## Acceptance criteria
 
-- [ ] A linked project lists its recent commits and open PRs
-- [ ] Re-sync is idempotent (upsert by sha/number)
-- [ ] Rate-limit friendly: cached responses, conditional requests (ETag)
+- [x] A linked project lists its recent commits and PRs (project detail page
+  `/projects/[id]`, Commits / Pull Requests tabs)
+- [x] Re-sync is idempotent (commits upsert by unique `sha`, PRs by
+  `[repositoryId, number]`; PR state stays truthful via `state=all` fetch)
+- [x] Rate-limit friendly: in-process ETag cache sends `If-None-Match`; 304s
+  cost no GitHub quota. Works unauthenticated for public repos; `GITHUB_TOKEN`
+  raises limits and unlocks private repos
+
+## Implementation notes
+
+- `services/github.service.ts` (typed client + `parseRepoReference` accepting
+  owner/name, URLs, SSH remotes), `repositories/github.repository.ts`,
+  `actions/github.actions.ts` (link/unlink/sync, auth-guarded).
+- New project detail page with repo card: link form when unlinked; repo info +
+  Sync + tabs when linked. Project names in the list now link to it.
+- Task↔PR link: tasks expose a `gitBranch` field (task form); PRs whose head
+  branch matches show the task as a gold chip.
+- **Deviation from plan:** no `Branch` model — branch names live on PRs and
+  tasks; a branch table added sync surface with no UI consumer. Revisit if a
+  branches view is ever needed.
+- Verified live against `justrinoo/personal-os` (repo/commits/pulls endpoints).

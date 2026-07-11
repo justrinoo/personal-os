@@ -1,4 +1,5 @@
 import type { Metadata } from "next";
+import Link from "next/link";
 import { FolderKanban, Pencil, Plus } from "lucide-react";
 
 import { deleteProjectAction } from "@/actions/project.actions";
@@ -108,7 +109,12 @@ export default async function ProjectsPage({
                 {projects.data.map((project) => (
                   <TableRow key={project.id}>
                     <TableCell className="font-medium">
-                      {project.name}
+                      <Link
+                        href={`/projects/${project.id}`}
+                        className="hover:underline"
+                      >
+                        {project.name}
+                      </Link>
                     </TableCell>
                     <TableCell>{project.workspace.name}</TableCell>
                     <TableCell className="text-muted-foreground">

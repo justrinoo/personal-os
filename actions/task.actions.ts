@@ -28,6 +28,7 @@ function toTaskData(input: TaskInput): TaskData {
     priority: input.priority,
     dueDate: input.dueDate ? new Date(input.dueDate) : null,
     projectId: input.projectId || null,
+    gitBranch: emptyToNull(input.gitBranch),
   };
 }
 

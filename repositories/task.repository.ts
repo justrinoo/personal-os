@@ -63,6 +63,7 @@ export interface TaskData {
   priority: Priority;
   dueDate: Date | null;
   projectId: string | null;
+  gitBranch: string | null;
 }
 
 export function createTask(data: TaskData): Promise<Task> {
