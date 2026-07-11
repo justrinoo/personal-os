@@ -41,6 +41,10 @@ without duplicating ClickUp as a system of record.
 - `services/clickup.service.ts`: typed API client (list fetch, task pagination,
   priority map, status heuristic). `repositories/clickup.repository.ts`: link/unlink,
   self-populating status map, remote-fields-only upsert (local task `type` untouched).
+- **Sync scope: only tickets assigned to the token owner** (`assignees[]` filter,
+  owner id resolved live from `/user`). Sync mirrors that set — synced tickets that
+  are deleted remotely or de-assigned are removed locally; manually created local
+  tasks (`clickupId` null) are never touched.
 - Migration `20260711090743_clickup`: link fields on projects, `clickupUrl` +
   `clickupRemoteUpdatedAt` on tasks, `clickup_status_map` table.
 - Stage 2 (two-way updates, webhooks) remains open per ADR-003.

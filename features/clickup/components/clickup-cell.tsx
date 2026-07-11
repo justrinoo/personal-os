@@ -57,7 +57,12 @@ export function ClickUpCell({
     startTransition(async () => {
       const result = await syncClickUpAction(projectId);
       if (result.ok) {
-        toast.success(`Synced ${result.synced ?? 0} tasks from ClickUp`);
+        const removed = result.removed
+          ? ` (${result.removed} no longer yours removed)`
+          : "";
+        toast.success(
+          `Synced ${result.synced ?? 0} of your tickets${removed}`
+        );
       } else {
         toast.error(result.error ?? "Sync failed");
       }

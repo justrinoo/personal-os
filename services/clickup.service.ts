@@ -177,15 +177,29 @@ function mapRemoteTask(task: ClickUpTaskPayload): RemoteTask {
   };
 }
 
-/** Fetches every task in a list (paginated, includes closed). */
-export async function fetchAllListTasks(listId: string): Promise<RemoteTask[]> {
+/** The ClickUp user the configured token belongs to. */
+export async function fetchAuthorizedUserId(): Promise<number> {
+  const data = await clickupFetch<{ user: { id: number } }>("/user");
+  return data.user.id;
+}
+
+/**
+ * Fetches every task in a list (paginated, includes closed). When
+ * `assigneeId` is given, ClickUp filters server-side to tasks assigned
+ * to that user.
+ */
+export async function fetchAllListTasks(
+  listId: string,
+  assigneeId?: number
+): Promise<RemoteTask[]> {
+  const assigneeFilter = assigneeId ? `&assignees[]=${assigneeId}` : "";
   const tasks: RemoteTask[] = [];
   for (let page = 0; ; page++) {
     const data = await clickupFetch<{
       tasks: ClickUpTaskPayload[];
       last_page?: boolean;
     }>(
-      `/list/${encodeURIComponent(listId)}/task?page=${page}&include_closed=true`
+      `/list/${encodeURIComponent(listId)}/task?page=${page}&include_closed=true${assigneeFilter}`
     );
     tasks.push(...data.tasks.map(mapRemoteTask));
     if (data.last_page !== false || data.tasks.length === 0) break;

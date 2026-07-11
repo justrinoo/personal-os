@@ -5,6 +5,7 @@ import { z } from "zod";
 
 import {
   applyLocalTicketChange,
+  deleteMissingClickUpTasks,
   getProjectClickUpLink,
   getStatusMap,
   getTaskClickUpRef,
@@ -18,6 +19,7 @@ import {
 import {
   ClickUpError,
   fetchAllListTasks,
+  fetchAuthorizedUserId,
   fetchListStatuses,
   guessLocalStatus,
   resolveListReference,
@@ -81,11 +83,20 @@ export async function unlinkClickUpListAction(
 
 export interface SyncResult extends ActionResult {
   synced?: number;
+  removed?: number;
 }
 
-async function syncProject(projectId: string, listId: string): Promise<number> {
+/**
+ * Pulls only tickets assigned to the token owner, then mirrors: local
+ * ClickUp rows that dropped out of the remote set are removed.
+ */
+async function syncProject(
+  projectId: string,
+  listId: string,
+  assigneeId: number
+): Promise<{ synced: number; removed: number }> {
   const [remoteTasks, statusMap] = await Promise.all([
-    fetchAllListTasks(listId),
+    fetchAllListTasks(listId, assigneeId),
     getStatusMap(),
   ]);
 
@@ -99,8 +110,12 @@ async function syncProject(projectId: string, listId: string): Promise<number> {
     await upsertSyncedTask(projectId, remote, status);
   }
 
+  const removed = await deleteMissingClickUpTasks(
+    projectId,
+    remoteTasks.map((task) => task.id)
+  );
   await markProjectSynced(projectId);
-  return remoteTasks.length;
+  return { synced: remoteTasks.length, removed };
 }
 
 export async function syncClickUpAction(
@@ -112,9 +127,10 @@ export async function syncClickUpAction(
     if (!link?.clickupListId) {
       return actionError("Project has no linked ClickUp list");
     }
-    const synced = await syncProject(projectId, link.clickupListId);
+    const assigneeId = await fetchAuthorizedUserId();
+    const result = await syncProject(projectId, link.clickupListId, assigneeId);
     revalidate();
-    return { ok: true, synced };
+    return { ok: true, ...result };
   } catch (error) {
     return toActionError(error, "Sync failed");
   }
@@ -127,12 +143,20 @@ export async function syncAllClickUpAction(): Promise<SyncResult> {
     if (projects.length === 0) {
       return actionError("No projects have a linked ClickUp list yet");
     }
-    let total = 0;
+    const assigneeId = await fetchAuthorizedUserId();
+    let synced = 0;
+    let removed = 0;
     for (const project of projects) {
-      total += await syncProject(project.id, project.clickupListId as string);
+      const result = await syncProject(
+        project.id,
+        project.clickupListId as string,
+        assigneeId
+      );
+      synced += result.synced;
+      removed += result.removed;
     }
     revalidate();
-    return { ok: true, synced: total };
+    return { ok: true, synced, removed };
   } catch (error) {
     return toActionError(error, "Sync failed");
   }

@@ -92,6 +92,24 @@ export function markProjectSynced(projectId: string) {
   });
 }
 
+/**
+ * Mirror cleanup: removes synced ClickUp tasks that are no longer in the
+ * remote result set (deleted, or no longer assigned to me). Never touches
+ * manually created local tasks (clickupId null).
+ */
+export async function deleteMissingClickUpTasks(
+  projectId: string,
+  keepClickUpIds: string[]
+): Promise<number> {
+  const result = await prisma.task.deleteMany({
+    where: {
+      projectId,
+      clickupId: { not: null, notIn: keepClickUpIds },
+    },
+  });
+  return result.count;
+}
+
 export type ClickUpTicket = Prisma.TaskGetPayload<{
   include: { project: true };
 }>;
