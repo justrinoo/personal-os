@@ -1,24 +1,19 @@
 import type { Metadata } from "next";
-import { Geist_Mono, Plus_Jakarta_Sans, Space_Grotesk } from "next/font/google";
+import { Inter, JetBrains_Mono } from "next/font/google";
 import "./globals.css";
 
 import { Toaster } from "@/components/ui/sonner";
 
-// Plus Jakarta Sans carries body text (modern grotesque, excellent at
-// small sizes); Space Grotesk gives headings a technical character that
-// fits the deep-navy theme. Geist Mono stays for data and numbers.
-const jakarta = Plus_Jakarta_Sans({
-  variable: "--font-jakarta",
+// FitFlow (DESIGN.md): Inter carries both display and body roles —
+// single-family rhythm, weights 400–700 only. JetBrains Mono handles
+// code, metrics, and tabular data.
+const inter = Inter({
+  variable: "--font-inter",
   subsets: ["latin"],
 });
 
-const spaceGrotesk = Space_Grotesk({
-  variable: "--font-space-grotesk",
-  subsets: ["latin"],
-});
-
-const geistMono = Geist_Mono({
-  variable: "--font-geist-mono",
+const jetbrainsMono = JetBrains_Mono({
+  variable: "--font-jetbrains-mono",
   subsets: ["latin"],
 });
 
@@ -36,11 +31,11 @@ export default function RootLayout({
   children: React.ReactNode;
 }>) {
   return (
-    // Midnight Harbor is a dark-first theme; light tokens exist for a
-    // future toggle.
-    <html lang="en" className="dark">
+    // FitFlow is light-first (warm beige); dark mode is the Warm
+    // Inversion, available for a future toggle.
+    <html lang="en">
       <body
-        className={`${jakarta.variable} ${spaceGrotesk.variable} ${geistMono.variable} antialiased`}
+        className={`${inter.variable} ${jetbrainsMono.variable} antialiased`}
       >
         {children}
         <Toaster />

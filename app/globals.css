@@ -7,9 +7,9 @@
 @theme inline {
   --color-background: var(--background);
   --color-foreground: var(--foreground);
-  --font-sans: var(--font-jakarta);
-  --font-mono: var(--font-geist-mono);
-  --font-heading: var(--font-space-grotesk);
+  --font-sans: var(--font-inter);
+  --font-mono: var(--font-jetbrains-mono);
+  --font-heading: var(--font-inter);
   --color-sidebar-ring: var(--sidebar-ring);
   --color-sidebar-border: var(--sidebar-border);
   --color-sidebar-accent-foreground: var(--sidebar-accent-foreground);
@@ -49,137 +49,133 @@
 }
 
 /*
- * Personal OS design system — "Midnight Harbor"
- * Deep-navy surfaces with layered soft depth: cards float on drop
- * shadows with a hairline light edge on top; fields are carved in;
- * primary actions carry a quiet blue glow. Dark is the default theme.
- * Palette: colorhunt 1B262C / 0F4C75 / 3282B8 / BBE1FA.
- * Full guide: docs/architecture/ui-system.md
+ * Personal OS theme — "FitFlow" (from DESIGN.md, the canonical style
+ * source generated via NeedMCP). Golden-hour gold on warm beige,
+ * shadow-only elevation, Inter everywhere, JetBrains Mono for data.
+ * Light is the default; dark mode follows the Warm Inversion Principle
+ * (invert luminance, keep the warmth).
+ * Token mapping notes: docs/architecture/ui-system.md
  */
 :root {
-  --background: #e9f2fa;
-  --foreground: #1b262c;
-  --card: #f5faff;
-  --card-foreground: #1b262c;
-  --popover: #f5faff;
-  --popover-foreground: #1b262c;
-  --primary: #0f4c75;
-  --primary-foreground: #eaf4fc;
-  --secondary: #cfe6f8;
-  --secondary-foreground: #0f4c75;
-  --muted: #dcebf7;
-  --muted-foreground: #4a6373;
-  --accent: #bbe1fa;
-  --accent-foreground: #12405f;
-  --destructive: #c04d4d;
-  --border: #c9dcec;
-  --input: #c9dcec;
-  --ring: #3282b8;
-  --chart-1: #0f4c75;
-  --chart-2: #3282b8;
-  --chart-3: #1b262c;
-  --chart-4: #bbe1fa;
-  --chart-5: #6fa8d2;
-  --radius: 1rem;
-  --sidebar: #e9f2fa;
-  --sidebar-foreground: #1b262c;
-  --sidebar-primary: #0f4c75;
-  --sidebar-primary-foreground: #eaf4fc;
-  --sidebar-accent: #d4e8f9;
-  --sidebar-accent-foreground: #0f4c75;
-  --sidebar-border: transparent;
-  --sidebar-ring: #3282b8;
-  /* depth pair: drop shade below, hairline light above */
-  --neu-dark: rgba(27, 38, 44, 0.16);
-  --neu-light: rgba(255, 255, 255, 0.85);
-  --glow: rgba(50, 130, 184, 0.35);
+  --background: #ebe9e4;
+  --foreground: #1a1d20;
+  --card: #ffffff;
+  --card-foreground: #1a1d20;
+  --popover: #ffffff;
+  --popover-foreground: #1a1d20;
+  --primary: #ffd147;
+  --primary-hover: #f5c038;
+  --primary-deep: #e0ad20;
+  --primary-foreground: #1a1d20;
+  --secondary: #dcd4c6;
+  --secondary-foreground: #1a1d20;
+  --muted: #f5f3ef;
+  --muted-foreground: #6e7073;
+  --accent: #f8f7f4;
+  --accent-foreground: #1a1d20;
+  --destructive: #c24136;
+  --border: #e5e2dc;
+  --input: #c9c6be;
+  --ring: #ffd147;
+  --chart-1: #ffd147;
+  --chart-2: #ffb347;
+  --chart-3: #ff8a7a;
+  --chart-4: #222327;
+  --chart-5: #c9c6be;
+  --radius: 0.75rem;
+  --sidebar: #f0eee9;
+  --sidebar-foreground: #1a1d20;
+  --sidebar-primary: #ffd147;
+  --sidebar-primary-foreground: #1a1d20;
+  --sidebar-accent: #f8f7f4;
+  --sidebar-accent-foreground: #1a1d20;
+  --sidebar-border: #e5e2dc;
+  --sidebar-ring: #ffd147;
+  /* FitFlow elevation (shadow-only depth) */
+  --elevation-1: 0 1px 3px rgba(0, 0, 0, 0.08);
+  --elevation-2: 0 4px 12px rgba(0, 0, 0, 0.1);
+  --elevation-3: 0 8px 24px rgba(0, 0, 0, 0.15);
+  --elevation-4: 0 12px 32px rgba(0, 0, 0, 0.2);
 }
 
 .dark {
-  --background: #1b262c;
-  --foreground: #dcecf7;
-  --card: #212f38;
-  --card-foreground: #dcecf7;
-  --popover: #243440;
-  --popover-foreground: #dcecf7;
-  --primary: #3282b8;
-  --primary-foreground: #f2f9ff;
-  --secondary: #0f4c75;
-  --secondary-foreground: #bbe1fa;
-  --muted: #26363f;
-  --muted-foreground: #8fadc0;
-  --accent: #2a3d49;
-  --accent-foreground: #bbe1fa;
-  --destructive: #e0847d;
-  --border: rgba(187, 225, 250, 0.1);
-  --input: rgba(187, 225, 250, 0.12);
-  --ring: #3282b8;
-  --chart-1: #3282b8;
-  --chart-2: #bbe1fa;
-  --chart-3: #0f4c75;
-  --chart-4: #6fa8d2;
-  --chart-5: #8fc7ec;
-  --sidebar: #1b262c;
-  --sidebar-foreground: #dcecf7;
-  --sidebar-primary: #3282b8;
-  --sidebar-primary-foreground: #f2f9ff;
-  --sidebar-accent: #26363f;
-  --sidebar-accent-foreground: #bbe1fa;
-  --sidebar-border: transparent;
-  --sidebar-ring: #3282b8;
-  --neu-dark: rgba(6, 12, 16, 0.55);
-  --neu-light: rgba(187, 225, 250, 0.07);
-  --glow: rgba(50, 130, 184, 0.45);
+  --background: #121212;
+  --foreground: #e4e4e7;
+  --card: #2a2a2a;
+  --card-foreground: #e4e4e7;
+  --popover: #2a2a2a;
+  --popover-foreground: #e4e4e7;
+  --primary: #ffd147;
+  --primary-hover: #ffe070;
+  --primary-deep: #e0ad20;
+  --primary-foreground: #1a1d20;
+  --secondary: #3e3a33;
+  --secondary-foreground: #e4e4e7;
+  --muted: #1e1e1e;
+  --muted-foreground: #909097;
+  --accent: #333333;
+  --accent-foreground: #e4e4e7;
+  --destructive: #ff8a7a;
+  --border: #2a2a2a;
+  --input: #555555;
+  --ring: #ffd147;
+  --chart-1: #ffd147;
+  --chart-2: #ffb347;
+  --chart-3: #ff8a7a;
+  --chart-4: #d4d4d8;
+  --chart-5: #555555;
+  --sidebar: #181818;
+  --sidebar-foreground: #e4e4e7;
+  --sidebar-primary: #ffd147;
+  --sidebar-primary-foreground: #1a1d20;
+  --sidebar-accent: #2a2a2a;
+  --sidebar-accent-foreground: #e4e4e7;
+  --sidebar-border: #2a2a2a;
+  --sidebar-ring: #ffd147;
+  --elevation-1: 0 1px 3px rgba(0, 0, 0, 0.3);
+  --elevation-2: 0 4px 12px rgba(0, 0, 0, 0.4);
+  --elevation-3: 0 8px 24px rgba(0, 0, 0, 0.5);
+  --elevation-4: 0 12px 32px rgba(0, 0, 0, 0.6);
 }
 
-/* ── Depth utilities (usable as class names, incl. variants) ─────────
-   raised = drop shadow below + hairline light on the top edge
-   inset  = carved into the surface */
+/* ── Depth utilities ─────────────────────────────────────────────────
+   Kept under their historical neu-* names so existing markup keeps
+   working; values now follow FitFlow's shadow-only elevation table. */
 
 @utility neu-raised {
   background-color: var(--card);
   border-color: transparent;
-  box-shadow:
-    0 12px 28px -12px var(--neu-dark),
-    0 2px 6px -2px var(--neu-dark),
-    inset 0 1px 0 var(--neu-light);
+  box-shadow: var(--elevation-1);
 }
 
 @utility neu-raised-sm {
   border-color: transparent;
-  box-shadow:
-    0 4px 12px -4px var(--neu-dark),
-    inset 0 1px 0 var(--neu-light);
+  box-shadow: var(--elevation-1);
 }
 
 @utility neu-inset {
+  background-color: var(--muted);
   border-color: transparent;
-  box-shadow:
-    inset 0 3px 8px -2px var(--neu-dark),
-    inset 0 -1px 0 var(--neu-light);
+  box-shadow: inset 0 1px 2px rgba(0, 0, 0, 0.06);
 }
 
 @utility neu-inset-sm {
+  background-color: var(--muted);
   border-color: transparent;
-  box-shadow: inset 0 2px 6px -2px var(--neu-dark);
+  box-shadow: inset 0 1px 2px rgba(0, 0, 0, 0.06);
 }
 
-/* raised panel for table wrappers and free-form tiles */
+/* card-like panel for table wrappers and free-form tiles */
 @utility neu-panel {
   background-color: var(--card);
-  border: 1px solid var(--border);
-  border-radius: var(--radius-xl);
-  box-shadow:
-    0 12px 28px -12px var(--neu-dark),
-    0 2px 6px -2px var(--neu-dark),
-    inset 0 1px 0 var(--neu-light);
+  border-color: transparent;
+  border-radius: var(--radius-lg);
+  box-shadow: var(--elevation-1);
 }
 
-/* quiet blue glow for primary emphasis */
+/* primary emphasis — FitFlow has no glow; equals a gentle lift */
 @utility glow-primary {
-  box-shadow:
-    0 6px 20px -6px var(--glow),
-    inset 0 1px 0 var(--neu-light);
+  box-shadow: var(--elevation-1);
 }
 
 @layer base {
@@ -192,6 +188,7 @@
   html {
     @apply font-sans;
   }
+  /* FitFlow headline discipline: tight, energetic, never thin */
   h1,
   h2,
   h3,
@@ -200,28 +197,29 @@
   [data-slot="dialog-title"],
   [data-slot="alert-dialog-title"] {
     font-family: var(--font-heading);
-    letter-spacing: -0.015em;
+    letter-spacing: -0.025em;
+    font-weight: 600;
   }
 }
 
-/* ── Depth applied to shadcn primitives via data-slot ─────────────────
+/* ── FitFlow applied to shadcn primitives via data-slot ───────────────
    Intentionally UNLAYERED: unlayered rules beat Tailwind's layered
    utilities (shadow-sm, bg-transparent, border-input) that ship inside
    the shadcn components. */
 
-/* surfaces float on soft depth with a hairline border for definition */
+/* cards are white surfaces on level-1 shadow; hover lifts to level 2 */
 [data-slot="card"] {
   background-color: var(--card);
-  border: 1px solid var(--border);
-  border-radius: var(--radius-xl);
-  box-shadow:
-    0 12px 28px -12px var(--neu-dark),
-    0 2px 6px -2px var(--neu-dark),
-    inset 0 1px 0 var(--neu-light);
-  transition: box-shadow 0.25s ease, transform 0.25s ease;
+  border-color: transparent;
+  border-radius: var(--radius-lg);
+  box-shadow: var(--elevation-1);
+  transition: box-shadow 0.2s ease;
+}
+[data-slot="card"]:hover {
+  box-shadow: var(--elevation-2);
 }
 
-/* floating layers lift a little further */
+/* floating layers use level 3 */
 [data-slot="dialog-content"],
 [data-slot="alert-dialog-content"],
 [data-slot="dropdown-menu-content"],
@@ -229,55 +227,50 @@
 [data-slot="select-content"],
 [data-slot="popover-content"] {
   background-color: var(--popover);
-  border: 1px solid var(--border);
-  box-shadow:
-    0 20px 44px -16px var(--neu-dark),
-    0 4px 10px -4px var(--neu-dark),
-    inset 0 1px 0 var(--neu-light);
+  border-color: var(--border);
+  box-shadow: var(--elevation-3);
 }
 
-/* fields are carved into the surface */
+/* fields are flat white with a visible border; focus ring is gold */
 [data-slot="input"],
 [data-slot="textarea"],
 [data-slot="select-trigger"] {
-  background-color: color-mix(in oklab, var(--background) 80%, var(--card));
-  border: 1px solid var(--border);
-  box-shadow: inset 0 2px 6px -2px var(--neu-dark);
+  background-color: var(--card);
+  border: 1px solid var(--input);
+  box-shadow: none;
 }
 
-/* tab rail is a groove; the active tab pops out of it */
+/* FitFlow tabs: transparent rail, active tab gets a 2px gold underline */
 [data-slot="tabs-list"] {
-  background-color: color-mix(in oklab, var(--background) 75%, var(--card));
-  border-radius: var(--radius-lg);
-  box-shadow: inset 0 2px 6px -2px var(--neu-dark);
-  padding: 4px;
+  background-color: transparent;
+  border-radius: 0;
+  box-shadow: none;
+  padding: 0;
+  border-bottom: 1px solid var(--border);
+}
+[data-slot="tabs-trigger"] {
+  border-radius: 0;
+  color: var(--muted-foreground);
 }
 [data-slot="tabs-trigger"][data-active] {
-  background-color: var(--card);
-  box-shadow:
-    0 4px 12px -4px var(--neu-dark),
-    inset 0 1px 0 var(--neu-light);
+  background-color: transparent;
+  color: var(--foreground);
+  box-shadow: inset 0 -2px 0 var(--primary);
 }
 
-/* table panels: page wrappers and the shared shadcn container */
+/* table panels: white cards on level-1 shadow */
 [data-slot="table-container"] {
   background-color: var(--card);
-  border: 1px solid var(--border);
-  border-radius: var(--radius-xl);
-  box-shadow:
-    0 12px 28px -12px var(--neu-dark),
-    0 2px 6px -2px var(--neu-dark),
-    inset 0 1px 0 var(--neu-light);
+  border-color: transparent;
+  border-radius: var(--radius-lg);
+  box-shadow: var(--elevation-1);
 }
 div.rounded-lg.border:has(> [data-slot="table-container"]),
 div.rounded-lg.border:has(> table) {
   background-color: var(--card);
-  border: 1px solid var(--border);
-  border-radius: var(--radius-xl);
-  box-shadow:
-    0 12px 28px -12px var(--neu-dark),
-    0 2px 6px -2px var(--neu-dark),
-    inset 0 1px 0 var(--neu-light);
+  border-color: transparent;
+  border-radius: var(--radius-lg);
+  box-shadow: var(--elevation-1);
 }
 /* avoid double depth when the shadcn container sits inside a styled wrapper */
 div.rounded-lg.border [data-slot="table-container"],
@@ -288,35 +281,29 @@ div.rounded-lg.border [data-slot="table-container"],
   box-shadow: none;
 }
 
-/* table rows respond to hover — nothing feels static */
+/* rows respond to hover with the warm surface tone */
 [data-slot="table-body"] tr {
   transition: background-color 0.15s ease;
 }
 [data-slot="table-body"] tr:hover {
-  background-color: color-mix(in oklab, var(--accent) 30%, transparent);
+  background-color: var(--accent);
 }
 
-/* active nav item is pressed into the sidebar with an accent bar */
+/* active nav item: warm surface + gold accent bar */
 [data-slot="sidebar-menu-button"][data-active="true"] {
-  background: linear-gradient(
-    90deg,
-    color-mix(in oklab, var(--primary) 22%, transparent),
-    transparent 85%
-  );
+  background-color: var(--sidebar-accent);
   color: var(--sidebar-accent-foreground);
   font-weight: 600;
-  box-shadow:
-    inset 2px 0 0 var(--primary),
-    inset 0 2px 6px -2px var(--neu-dark);
+  box-shadow: inset 2px 0 0 var(--primary);
 }
 
 [data-slot="badge"] {
-  border-color: var(--border);
+  border-color: transparent;
 }
 
-/* the sidebar is a soft edge, not a hard line */
+/* sidebar separates with a hairline, per FitFlow's flat chrome */
 [data-slot="sidebar-inner"] {
-  box-shadow: 8px 0 24px -12px var(--neu-dark);
+  border-right: 1px solid var(--sidebar-border);
 }
 
 @media (prefers-reduced-motion: reduce) {
