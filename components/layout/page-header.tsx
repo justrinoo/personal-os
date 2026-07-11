@@ -9,18 +9,21 @@ interface PageHeaderProps {
 
 export function PageHeader({ title, description, children }: PageHeaderProps) {
   return (
-    <header className="flex items-center gap-3 px-4 py-3 shadow-[0_8px_14px_-10px_var(--neu-dark)] md:px-6">
+    <header className="flex flex-wrap items-center gap-3 border-b px-4 py-5 md:px-8">
       <SidebarTrigger className="-ml-1" />
       <Separator orientation="vertical" className="h-5" />
-      <div className="flex flex-1 flex-col">
-        <h1 className="text-base font-semibold md:text-lg">{title}</h1>
+      <div className="flex min-w-0 flex-1 flex-col gap-0.5">
+        {/* FitFlow display-md: 30px/600, tight tracking */}
+        <h1 className="truncate text-2xl font-semibold tracking-[-0.5px] md:text-3xl">
+          {title}
+        </h1>
         {description ? (
-          <p className="text-xs text-muted-foreground md:text-sm">
+          <p className="truncate text-sm text-muted-foreground md:text-base">
             {description}
           </p>
         ) : null}
       </div>
-      {children}
+      <div className="flex items-center gap-2">{children}</div>
     </header>
   );
 }

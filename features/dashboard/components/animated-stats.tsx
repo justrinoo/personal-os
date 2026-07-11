@@ -97,8 +97,8 @@ export function AnimatedStats({ stats }: { stats: DashboardStat[] }) {
               <p className="text-sm text-muted-foreground">{stat.title}</p>
               <CountUp value={stat.value} format={stat.format} />
             </div>
-            <div className="neu-inset-sm flex size-10 items-center justify-center rounded-full">
-              <Icon className="size-4.5 text-primary" />
+            <div className="flex size-11 items-center justify-center rounded-full bg-primary/20">
+              <Icon className="size-5 text-(--primary-deep)" />
             </div>
           </motion.div>
         );

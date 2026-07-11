@@ -2,25 +2,26 @@ import { Badge } from "@/components/ui/badge";
 import { cn } from "@/lib/utils";
 import { formatEnumLabel } from "@/utils/format";
 
+// FitFlow badges are soft tinted pills: quiet background + readable text.
 const STATUS_STYLES: Record<string, string> = {
   // Shared / project
-  PLANNING: "border-sky-500/40 text-sky-600 dark:text-sky-400",
-  ACTIVE: "border-emerald-500/40 text-emerald-600 dark:text-emerald-400",
-  ON_HOLD: "border-amber-500/40 text-amber-600 dark:text-amber-400",
-  COMPLETED: "border-emerald-500/40 text-emerald-600 dark:text-emerald-400",
-  ARCHIVED: "border-muted-foreground/40 text-muted-foreground",
+  PLANNING: "bg-sky-500/10 text-sky-700 dark:text-sky-400",
+  ACTIVE: "bg-emerald-500/10 text-emerald-700 dark:text-emerald-400",
+  ON_HOLD: "bg-amber-500/15 text-amber-700 dark:text-amber-400",
+  COMPLETED: "bg-emerald-500/10 text-emerald-700 dark:text-emerald-400",
+  ARCHIVED: "bg-muted text-muted-foreground",
   // Task
-  BACKLOG: "border-muted-foreground/40 text-muted-foreground",
-  READY: "border-sky-500/40 text-sky-600 dark:text-sky-400",
-  DEVELOPMENT: "border-violet-500/40 text-violet-600 dark:text-violet-400",
-  REVIEW: "border-amber-500/40 text-amber-600 dark:text-amber-400",
-  TESTING: "border-amber-500/40 text-amber-600 dark:text-amber-400",
-  DONE: "border-emerald-500/40 text-emerald-600 dark:text-emerald-400",
+  BACKLOG: "bg-muted text-muted-foreground",
+  READY: "bg-sky-500/10 text-sky-700 dark:text-sky-400",
+  DEVELOPMENT: "bg-violet-500/10 text-violet-700 dark:text-violet-400",
+  REVIEW: "bg-amber-500/15 text-amber-700 dark:text-amber-400",
+  TESTING: "bg-amber-500/15 text-amber-700 dark:text-amber-400",
+  DONE: "bg-emerald-500/10 text-emerald-700 dark:text-emerald-400",
   // Priority
-  LOW: "border-muted-foreground/40 text-muted-foreground",
-  MEDIUM: "border-sky-500/40 text-sky-600 dark:text-sky-400",
-  HIGH: "border-amber-500/40 text-amber-600 dark:text-amber-400",
-  URGENT: "border-red-500/40 text-red-600 dark:text-red-400",
+  LOW: "bg-muted text-muted-foreground",
+  MEDIUM: "bg-sky-500/10 text-sky-700 dark:text-sky-400",
+  HIGH: "bg-amber-500/15 text-amber-700 dark:text-amber-400",
+  URGENT: "bg-red-500/10 text-red-700 dark:text-red-400",
 };
 
 interface StatusBadgeProps {

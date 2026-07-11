@@ -241,13 +241,45 @@ samp {
   box-shadow: var(--elevation-3);
 }
 
-/* fields are flat white with a visible border; focus ring is gold */
+/* fields are flat white with a visible border; focus ring is gold.
+   FitFlow spec: 44px tall, 12/20 padding, 16px body text */
 [data-slot="input"],
 [data-slot="textarea"],
 [data-slot="select-trigger"] {
   background-color: var(--card);
   border: 1px solid var(--input);
   box-shadow: none;
+}
+[data-slot="input"],
+[data-slot="select-trigger"]:not([data-size="sm"]) {
+  height: 2.75rem;
+  padding-inline: 1.25rem;
+  font-size: 1rem;
+}
+[data-slot="textarea"] {
+  padding: 0.75rem 1.25rem;
+  font-size: 1rem;
+}
+
+/* table headers sit on the warm surface tone, per the FitFlow table spec */
+[data-slot="table-header"] {
+  background-color: var(--accent);
+}
+[data-slot="table-head"] {
+  font-weight: 600;
+  color: color-mix(in oklab, var(--foreground) 78%, var(--muted-foreground));
+}
+
+/* badges are pills */
+[data-slot="badge"] {
+  border-color: transparent;
+  border-radius: 9999px;
+}
+
+/* card titles use heading-sm (20px/600) */
+[data-slot="card-title"] {
+  font-size: 1.25rem;
+  line-height: 1.25;
 }
 
 /* FitFlow tabs: transparent rail, active tab gets a 2px gold underline */
@@ -305,10 +337,6 @@ div.rounded-lg.border [data-slot="table-container"],
   color: var(--sidebar-accent-foreground);
   font-weight: 600;
   box-shadow: inset 2px 0 0 var(--primary);
-}
-
-[data-slot="badge"] {
-  border-color: transparent;
 }
 
 /* sidebar separates with a hairline, per FitFlow's flat chrome */
