@@ -1,10 +1,4 @@
-import {
-  Activity,
-  CalendarCheck,
-  Clock,
-  FolderKanban,
-  ListTodo,
-} from "lucide-react";
+import { Activity, ListTodo } from "lucide-react";
 
 import { PageHeader } from "@/components/layout/page-header";
 import { DbOfflineBanner } from "@/components/shared/db-offline-banner";
@@ -16,7 +10,7 @@ import {
   CardHeader,
   CardTitle,
 } from "@/components/ui/card";
-import { StatCard } from "@/features/dashboard/components/stat-card";
+import { AnimatedStats } from "@/features/dashboard/components/animated-stats";
 import {
   getDashboardStats,
   getRecentActivities,
@@ -45,28 +39,38 @@ export default async function DashboardPage() {
       <main className="flex flex-col gap-6 p-4 md:p-6">
         {!dbOnline ? <DbOfflineBanner /> : null}
 
-        <div className="grid gap-4 sm:grid-cols-2 xl:grid-cols-4">
-          <StatCard
-            title="Active Projects"
-            value={String(stats.data.activeProjects)}
-            icon={FolderKanban}
-          />
-          <StatCard
-            title="Open Tasks"
-            value={String(stats.data.openTasks)}
-            icon={ListTodo}
-          />
-          <StatCard
-            title="Today's Activity"
-            value={formatMinutes(stats.data.todayMinutes)}
-            icon={Clock}
-          />
-          <StatCard
-            title="Habits Done Today"
-            value={String(stats.data.habitsCompletedToday)}
-            icon={CalendarCheck}
-          />
-        </div>
+        <AnimatedStats
+          stats={[
+            {
+              key: "projects",
+              title: "Active Projects",
+              value: stats.data.activeProjects,
+              format: "count",
+              icon: "projects",
+            },
+            {
+              key: "tasks",
+              title: "Open Tasks",
+              value: stats.data.openTasks,
+              format: "count",
+              icon: "tasks",
+            },
+            {
+              key: "activity",
+              title: "Today's Activity",
+              value: stats.data.todayMinutes,
+              format: "minutes",
+              icon: "clock",
+            },
+            {
+              key: "habits",
+              title: "Habits Done Today",
+              value: stats.data.habitsCompletedToday,
+              format: "count",
+              icon: "habits",
+            },
+          ]}
+        />
 
         <div className="grid gap-6 lg:grid-cols-2">
           <Card>
