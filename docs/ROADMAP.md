@@ -19,6 +19,13 @@ work is committed. Details per phase live in [roadmap/](./roadmap/).
 | 12 | [AI](./roadmap/phase-12-ai.md) | Planned | — |
 | — | [Release v1](./roadmap/release-v1.md) | Gate | — |
 
+## After v1
+
+| Version | Plan | Status |
+|---|---|---|
+| v2 | [Personal Operational System](./roadmap/v2-personal-operational-system.md) — category-first navigation (Today/Business/Personal/Explore), 7-day AI self-review, Google/LinkedIn/affiliate integrations, Hermes agent orchestration, Expo mobile app | 📋 Planned |
+| v3 | Multi-tenant company mode (organizations, RBAC, audit) | 💭 Idea |
+
 ## Sequencing rationale
 
 - **Auth (03) before integrations** — API tokens and webhooks must not land in an unprotected app.
