@@ -182,13 +182,14 @@
   * {
     @apply border-border outline-ring/50;
   }
+  /* Fonts are wired explicitly: next/font defines --font-inter /
+     --font-jetbrains-mono on <body>, so the consuming rules must live at
+     body level or below (the vars don't exist on <html>). */
   body {
     @apply bg-background text-foreground;
+    font-family: var(--font-inter), ui-sans-serif, system-ui, sans-serif;
   }
-  html {
-    @apply font-sans;
-  }
-  /* FitFlow headline discipline: tight, energetic, never thin */
+  /* FitFlow headline discipline: same family (Inter), tighter and heavier */
   h1,
   h2,
   h3,
@@ -196,10 +197,19 @@
   [data-slot="card-title"],
   [data-slot="dialog-title"],
   [data-slot="alert-dialog-title"] {
-    font-family: var(--font-heading);
     letter-spacing: -0.025em;
     font-weight: 600;
   }
+}
+
+/* JetBrains Mono for data — unlayered so it wins even if the font-mono
+   utility compiles without a resolvable variable */
+.font-mono,
+code,
+pre,
+kbd,
+samp {
+  font-family: var(--font-jetbrains-mono), ui-monospace, "Courier New", monospace;
 }
 
 /* ── FitFlow applied to shadcn primitives via data-slot ───────────────
