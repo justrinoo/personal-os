@@ -183,6 +183,45 @@ export async function fetchAuthorizedUserId(): Promise<number> {
   return data.user.id;
 }
 
+export interface DiscoveredTask extends RemoteTask {
+  listId: string;
+  listName: string;
+}
+
+/**
+ * Workspace-wide discovery: every task assigned to the given user across
+ * all ClickUp teams the token can see, with its parent list attached.
+ */
+export async function fetchMyAssignedTasks(
+  assigneeId: number
+): Promise<DiscoveredTask[]> {
+  const { teams } = await clickupFetch<{ teams: { id: string }[] }>("/team");
+  const discovered: DiscoveredTask[] = [];
+
+  for (const team of teams) {
+    for (let page = 0; ; page++) {
+      const data = await clickupFetch<{
+        tasks: (ClickUpTaskPayload & {
+          list?: { id?: string; name?: string };
+        })[];
+        last_page?: boolean;
+      }>(
+        `/team/${encodeURIComponent(team.id)}/task?page=${page}&include_closed=true&assignees[]=${assigneeId}`
+      );
+      for (const task of data.tasks) {
+        if (!task.list?.id) continue;
+        discovered.push({
+          ...mapRemoteTask(task),
+          listId: task.list.id,
+          listName: task.list.name ?? task.list.id,
+        });
+      }
+      if (data.last_page !== false || data.tasks.length === 0) break;
+    }
+  }
+  return discovered;
+}
+
 /**
  * Fetches every task in a list (paginated, includes closed). When
  * `assigneeId` is given, ClickUp filters server-side to tasks assigned

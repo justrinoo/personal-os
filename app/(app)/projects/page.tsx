@@ -17,6 +17,7 @@ import {
   TableRow,
 } from "@/components/ui/table";
 import { ClickUpCell } from "@/features/clickup/components/clickup-cell";
+import { DiscoverButton } from "@/features/clickup/components/discover-button";
 import { ProjectFormDialog } from "@/features/projects/components/project-form-dialog";
 import { safeQuery } from "@/lib/safe-query";
 import { listProjects } from "@/repositories/project.repository";
@@ -39,6 +40,7 @@ export default async function ProjectsPage() {
         title="Projects"
         description="Every software project across your workspaces"
       >
+        <DiscoverButton />
         <ProjectFormDialog
           workspaces={workspaces.data}
           trigger={

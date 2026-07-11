@@ -32,9 +32,12 @@ without duplicating ClickUp as a system of record.
 ## How to use
 
 1. ClickUp → Settings → Apps → copy your personal API token → set `CLICKUP_TOKEN` in `.env`
-2. Projects page → **Link** in the ClickUp column → paste the list ID (from the list URL `…/v/li/<id>`)
-3. Click the sync icon — tasks upsert into the project; unknown remote statuses get a
-   guessed mapping saved to `clickup_status_map` (edit that table to correct them)
+2. **Zero-config path:** Projects or ClickUp page → **Import my ClickUp tickets** —
+   finds every ticket assigned to you across all teams, auto-creates one project per
+   list (inside the auto-created "ClickUp" workspace), and syncs everything
+3. Manual path: Projects page → **Link** in the ClickUp column → paste a ticket ID,
+   ticket URL, or list ID → sync icon. Unknown remote statuses get a guessed mapping
+   saved to `clickup_status_map` (edit that table to correct them)
 
 ## Implementation notes
 

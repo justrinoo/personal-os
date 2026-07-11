@@ -93,6 +93,51 @@ export function markProjectSynced(projectId: string) {
 }
 
 /**
+ * Finds (or creates) the workspace that auto-discovered ClickUp projects
+ * live in, so discovery needs zero configuration.
+ */
+export async function ensureClickUpWorkspace(): Promise<string> {
+  const existing = await prisma.workspace.findFirst({
+    where: { name: "ClickUp" },
+    select: { id: true },
+  });
+  if (existing) return existing.id;
+  const created = await prisma.workspace.create({
+    data: {
+      name: "ClickUp",
+      type: "OFFICE",
+      description: "Auto-created — projects discovered from ClickUp",
+    },
+    select: { id: true },
+  });
+  return created.id;
+}
+
+export function findProjectByListId(listId: string) {
+  return prisma.project.findUnique({
+    where: { clickupListId: listId },
+    select: { id: true },
+  });
+}
+
+export function createProjectForList(
+  workspaceId: string,
+  listId: string,
+  listName: string
+) {
+  return prisma.project.create({
+    data: {
+      name: listName,
+      description: "Auto-created from ClickUp list",
+      workspaceId,
+      clickupListId: listId,
+      clickupListName: listName,
+    },
+    select: { id: true },
+  });
+}
+
+/**
  * Mirror cleanup: removes synced ClickUp tasks that are no longer in the
  * remote result set (deleted, or no longer assigned to me). Never touches
  * manually created local tasks (clickupId null).

@@ -14,6 +14,7 @@ import {
   TableHeader,
   TableRow,
 } from "@/components/ui/table";
+import { DiscoverButton } from "@/features/clickup/components/discover-button";
 import { SyncAllButton } from "@/features/clickup/components/sync-all-button";
 import { TicketPrioritySelect } from "@/features/clickup/components/ticket-priority-select";
 import { TicketStatusMenu } from "@/features/clickup/components/ticket-status-menu";
@@ -44,6 +45,7 @@ export default async function ClickUpPage() {
             : "Your ClickUp tickets, managed from Personal OS"
         }
       >
+        <DiscoverButton />
         <SyncAllButton />
       </PageHeader>
       <main className="flex flex-col gap-6 p-4 md:p-6">
