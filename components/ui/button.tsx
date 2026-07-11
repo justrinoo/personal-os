@@ -10,7 +10,7 @@ const buttonVariants = cva(
     variants: {
       variant: {
         default:
-          "neu-raised-sm active:neu-inset-sm bg-primary font-semibold text-primary-foreground hover:bg-primary/90",
+          "glow-primary active:neu-inset-sm bg-primary font-semibold text-primary-foreground hover:bg-primary/90",
         outline:
           "neu-raised-sm active:neu-inset-sm bg-background hover:bg-accent/40 hover:text-foreground aria-expanded:bg-muted aria-expanded:text-foreground",
         secondary:

@@ -13,8 +13,21 @@ export type ProjectWithRelations = Prisma.ProjectGetPayload<{
   };
 }>;
 
-export function listProjects(): Promise<ProjectWithRelations[]> {
+export interface ProjectFilters {
+  q?: string;
+  status?: ProjectStatus;
+}
+
+export function listProjects(
+  filters: ProjectFilters = {}
+): Promise<ProjectWithRelations[]> {
   return prisma.project.findMany({
+    where: {
+      ...(filters.q
+        ? { name: { contains: filters.q, mode: "insensitive" } }
+        : {}),
+      ...(filters.status ? { status: filters.status } : {}),
+    },
     include: {
       workspace: true,
       client: true,

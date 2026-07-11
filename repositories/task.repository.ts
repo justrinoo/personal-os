@@ -20,8 +20,21 @@ const OPEN_STATUSES = [
   "TESTING",
 ] as const;
 
-export function listTasks(): Promise<TaskWithProject[]> {
+export interface TaskFilters {
+  q?: string;
+  status?: TaskStatus;
+  priority?: Priority;
+}
+
+export function listTasks(filters: TaskFilters = {}): Promise<TaskWithProject[]> {
   return prisma.task.findMany({
+    where: {
+      ...(filters.q
+        ? { title: { contains: filters.q, mode: "insensitive" } }
+        : {}),
+      ...(filters.status ? { status: filters.status } : {}),
+      ...(filters.priority ? { priority: filters.priority } : {}),
+    },
     include: { project: true },
     orderBy: { updatedAt: "desc" },
   });

@@ -4,6 +4,7 @@ import { ExternalLink, ListTodo, Pencil, Plus } from "lucide-react";
 import { deleteTaskAction } from "@/actions/task.actions";
 import { PageHeader } from "@/components/layout/page-header";
 import { DbOfflineBanner } from "@/components/shared/db-offline-banner";
+import { TableToolbar } from "@/components/shared/table-toolbar";
 import { DeleteButton } from "@/components/shared/delete-button";
 import { EmptyState } from "@/components/shared/empty-state";
 import { StatusBadge } from "@/components/shared/status-badge";
@@ -17,18 +18,32 @@ import {
   TableRow,
 } from "@/components/ui/table";
 import { TaskFormDialog } from "@/features/tasks/components/task-form-dialog";
+import { PRIORITIES, TASK_STATUSES } from "@/constants/enums";
 import { safeQuery } from "@/lib/safe-query";
 import { listProjectOptions } from "@/repositories/project.repository";
 import { listTasks } from "@/repositories/task.repository";
 import { formatDate, formatEnumLabel } from "@/utils/format";
+import { pickEnum } from "@/utils/search-params";
 
 export const metadata: Metadata = { title: "Tasks" };
 
 export const dynamic = "force-dynamic";
 
-export default async function TasksPage() {
+export default async function TasksPage({
+  searchParams,
+}: {
+  searchParams: Promise<Record<string, string | undefined>>;
+}) {
+  const params = await searchParams;
+  const filters = {
+    q: params.q,
+    status: pickEnum(params.status, TASK_STATUSES),
+    priority: pickEnum(params.priority, PRIORITIES),
+  };
+  const filtered = Boolean(filters.q || filters.status || filters.priority);
+
   const [tasks, projects] = await Promise.all([
-    safeQuery(() => listTasks(), []),
+    safeQuery(() => listTasks(filters), []),
     safeQuery(() => listProjectOptions(), []),
   ]);
 
@@ -51,11 +66,23 @@ export default async function TasksPage() {
       <main className="flex flex-col gap-6 p-4 md:p-6">
         {!tasks.ok ? <DbOfflineBanner /> : null}
 
+        <TableToolbar
+          searchPlaceholder="Search tasks…"
+          filters={[
+            { param: "status", placeholder: "All statuses", options: TASK_STATUSES },
+            { param: "priority", placeholder: "All priorities", options: PRIORITIES },
+          ]}
+        />
+
         {tasks.data.length === 0 ? (
           <EmptyState
             icon={ListTodo}
-            title="No tasks yet"
-            description="Tasks track development work from backlog to done."
+            title={filtered ? "No tasks match your filters" : "No tasks yet"}
+            description={
+              filtered
+                ? "Try a different search or clear the filters."
+                : "Tasks track development work from backlog to done."
+            }
           />
         ) : (
           <div className="overflow-x-auto rounded-lg border">

@@ -159,10 +159,25 @@ export type ClickUpTicket = Prisma.TaskGetPayload<{
   include: { project: true };
 }>;
 
+export interface TicketFilters {
+  q?: string;
+  projectId?: string;
+  status?: TaskStatus;
+}
+
 /** All locally synced ClickUp tickets, newest remote change first. */
-export function listClickUpTickets(): Promise<ClickUpTicket[]> {
+export function listClickUpTickets(
+  filters: TicketFilters = {}
+): Promise<ClickUpTicket[]> {
   return prisma.task.findMany({
-    where: { clickupId: { not: null } },
+    where: {
+      clickupId: { not: null },
+      ...(filters.q
+        ? { title: { contains: filters.q, mode: "insensitive" } }
+        : {}),
+      ...(filters.projectId ? { projectId: filters.projectId } : {}),
+      ...(filters.status ? { status: filters.status } : {}),
+    },
     include: { project: true },
     orderBy: { clickupRemoteUpdatedAt: "desc" },
   });

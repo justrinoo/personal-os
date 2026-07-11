@@ -1,19 +1,19 @@
 import type { Metadata } from "next";
-import { Geist_Mono, Nunito, Quicksand } from "next/font/google";
+import { Geist_Mono, Plus_Jakarta_Sans, Space_Grotesk } from "next/font/google";
 import "./globals.css";
 
 import { Toaster } from "@/components/ui/sonner";
 
-// Nunito (rounded humanist) carries body text; Quicksand (rounded
-// geometric) carries headings — both echo the soft-clay neumorphic
-// surfaces. Geist Mono stays for data and numbers.
-const nunito = Nunito({
-  variable: "--font-nunito",
+// Plus Jakarta Sans carries body text (modern grotesque, excellent at
+// small sizes); Space Grotesk gives headings a technical character that
+// fits the deep-navy theme. Geist Mono stays for data and numbers.
+const jakarta = Plus_Jakarta_Sans({
+  variable: "--font-jakarta",
   subsets: ["latin"],
 });
 
-const quicksand = Quicksand({
-  variable: "--font-quicksand",
+const spaceGrotesk = Space_Grotesk({
+  variable: "--font-space-grotesk",
   subsets: ["latin"],
 });
 
@@ -36,9 +36,11 @@ export default function RootLayout({
   children: React.ReactNode;
 }>) {
   return (
-    <html lang="en">
+    // Midnight Harbor is a dark-first theme; light tokens exist for a
+    // future toggle.
+    <html lang="en" className="dark">
       <body
-        className={`${nunito.variable} ${quicksand.variable} ${geistMono.variable} antialiased`}
+        className={`${jakarta.variable} ${spaceGrotesk.variable} ${geistMono.variable} antialiased`}
       >
         {children}
         <Toaster />

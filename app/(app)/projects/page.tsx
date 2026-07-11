@@ -5,6 +5,7 @@ import { deleteProjectAction } from "@/actions/project.actions";
 import { PageHeader } from "@/components/layout/page-header";
 import { DbOfflineBanner } from "@/components/shared/db-offline-banner";
 import { DeleteButton } from "@/components/shared/delete-button";
+import { TableToolbar } from "@/components/shared/table-toolbar";
 import { EmptyState } from "@/components/shared/empty-state";
 import { StatusBadge } from "@/components/shared/status-badge";
 import { Button } from "@/components/ui/button";
@@ -19,18 +20,31 @@ import {
 import { ClickUpCell } from "@/features/clickup/components/clickup-cell";
 import { DiscoverButton } from "@/features/clickup/components/discover-button";
 import { ProjectFormDialog } from "@/features/projects/components/project-form-dialog";
+import { PROJECT_STATUSES } from "@/constants/enums";
 import { safeQuery } from "@/lib/safe-query";
 import { listProjects } from "@/repositories/project.repository";
 import { listWorkspaceOptions } from "@/repositories/workspace.repository";
 import { formatDate } from "@/utils/format";
+import { pickEnum } from "@/utils/search-params";
 
 export const metadata: Metadata = { title: "Projects" };
 
 export const dynamic = "force-dynamic";
 
-export default async function ProjectsPage() {
+export default async function ProjectsPage({
+  searchParams,
+}: {
+  searchParams: Promise<Record<string, string | undefined>>;
+}) {
+  const params = await searchParams;
+  const filters = {
+    q: params.q,
+    status: pickEnum(params.status, PROJECT_STATUSES),
+  };
+  const filtered = Boolean(filters.q || filters.status);
+
   const [projects, workspaces] = await Promise.all([
-    safeQuery(() => listProjects(), []),
+    safeQuery(() => listProjects(filters), []),
     safeQuery(() => listWorkspaceOptions(), []),
   ]);
 
@@ -54,11 +68,26 @@ export default async function ProjectsPage() {
       <main className="flex flex-col gap-6 p-4 md:p-6">
         {!projects.ok ? <DbOfflineBanner /> : null}
 
+        <TableToolbar
+          searchPlaceholder="Search projects…"
+          filters={[
+            {
+              param: "status",
+              placeholder: "All statuses",
+              options: PROJECT_STATUSES,
+            },
+          ]}
+        />
+
         {projects.data.length === 0 ? (
           <EmptyState
             icon={FolderKanban}
-            title="No projects yet"
-            description="Create your first project to start tracking features, tasks, and deployments."
+            title={filtered ? "No projects match your filters" : "No projects yet"}
+            description={
+              filtered
+                ? "Try a different search or clear the filters."
+                : "Create your first project to start tracking features, tasks, and deployments."
+            }
           />
         ) : (
           <div className="overflow-x-auto rounded-lg border">

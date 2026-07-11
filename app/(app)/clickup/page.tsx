@@ -5,6 +5,7 @@ import { ExternalLink, Ticket } from "lucide-react";
 import { PageHeader } from "@/components/layout/page-header";
 import { DbOfflineBanner } from "@/components/shared/db-offline-banner";
 import { EmptyState } from "@/components/shared/empty-state";
+import { TableToolbar } from "@/components/shared/table-toolbar";
 import { StatusBadge } from "@/components/shared/status-badge";
 import {
   Table,
@@ -18,20 +19,34 @@ import { DiscoverButton } from "@/features/clickup/components/discover-button";
 import { SyncAllButton } from "@/features/clickup/components/sync-all-button";
 import { TicketPrioritySelect } from "@/features/clickup/components/ticket-priority-select";
 import { TicketStatusMenu } from "@/features/clickup/components/ticket-status-menu";
+import { TASK_STATUSES } from "@/constants/enums";
 import { safeQuery } from "@/lib/safe-query";
 import {
   listClickUpTickets,
   listLinkedProjects,
 } from "@/repositories/clickup.repository";
 import { formatDate } from "@/utils/format";
+import { pickEnum } from "@/utils/search-params";
 
 export const metadata: Metadata = { title: "ClickUp" };
 
 export const dynamic = "force-dynamic";
 
-export default async function ClickUpPage() {
+export default async function ClickUpPage({
+  searchParams,
+}: {
+  searchParams: Promise<Record<string, string | undefined>>;
+}) {
+  const params = await searchParams;
+  const filters = {
+    q: params.q,
+    projectId: params.project,
+    status: pickEnum(params.status, TASK_STATUSES),
+  };
+  const filtered = Boolean(filters.q || filters.projectId || filters.status);
+
   const [tickets, linkedProjects] = await Promise.all([
-    safeQuery(() => listClickUpTickets(), []),
+    safeQuery(() => listClickUpTickets(filters), []),
     safeQuery(() => listLinkedProjects(), []),
   ]);
 
@@ -51,18 +66,41 @@ export default async function ClickUpPage() {
       <main className="flex flex-col gap-6 p-4 md:p-6">
         {!tickets.ok ? <DbOfflineBanner /> : null}
 
+        <TableToolbar
+          searchPlaceholder="Search tickets…"
+          filters={[
+            {
+              param: "project",
+              placeholder: "All projects",
+              options: linkedProjects.data.map((project) => ({
+                value: project.id,
+                label: project.name,
+              })),
+            },
+            {
+              param: "status",
+              placeholder: "All statuses",
+              options: TASK_STATUSES,
+            },
+          ]}
+        />
+
         {tickets.data.length === 0 ? (
           <EmptyState
             icon={Ticket}
             title={
-              linkedProjects.data.length === 0
-                ? "No ClickUp lists linked"
-                : "No tickets synced yet"
+              filtered
+                ? "No tickets match your filters"
+                : linkedProjects.data.length === 0
+                  ? "No ClickUp lists linked"
+                  : "No tickets synced yet"
             }
             description={
-              linkedProjects.data.length === 0
-                ? "Link a ClickUp list to a project from the Projects page, then sync."
-                : 'Hit "Sync all" to pull your tickets from ClickUp.'
+              filtered
+                ? "Try a different search or clear the filters."
+                : linkedProjects.data.length === 0
+                  ? "Link a ClickUp list to a project from the Projects page, then sync."
+                  : 'Hit "Sync all" to pull your tickets from ClickUp.'
             }
           />
         ) : (

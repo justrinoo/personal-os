@@ -7,9 +7,9 @@
 @theme inline {
   --color-background: var(--background);
   --color-foreground: var(--foreground);
-  --font-sans: var(--font-nunito);
+  --font-sans: var(--font-jakarta);
   --font-mono: var(--font-geist-mono);
-  --font-heading: var(--font-quicksand);
+  --font-heading: var(--font-space-grotesk);
   --color-sidebar-ring: var(--sidebar-ring);
   --color-sidebar-border: var(--sidebar-border);
   --color-sidebar-accent-foreground: var(--sidebar-accent-foreground);
@@ -49,125 +49,137 @@
 }
 
 /*
- * Personal OS design system — "soft clay garden"
- * Neumorphism molded from one material (the sage-cream base). Elevation
- * comes from dual shadows (light from top-left, shade to bottom-right),
- * never from hard borders. Palette: colorhunt EDF1D6 / 9DC08B / 609966 / 40513B.
+ * Personal OS design system — "Midnight Harbor"
+ * Deep-navy surfaces with layered soft depth: cards float on drop
+ * shadows with a hairline light edge on top; fields are carved in;
+ * primary actions carry a quiet blue glow. Dark is the default theme.
+ * Palette: colorhunt 1B262C / 0F4C75 / 3282B8 / BBE1FA.
  * Full guide: docs/architecture/ui-system.md
  */
 :root {
-  --background: #edf1d6;
-  --foreground: #40513b;
-  --card: #edf1d6;
-  --card-foreground: #40513b;
-  --popover: #eef2d9;
-  --popover-foreground: #40513b;
-  --primary: #609966;
-  --primary-foreground: #f7fae9;
-  --secondary: #dce5bd;
-  --secondary-foreground: #40513b;
-  --muted: #e2e8c6;
-  --muted-foreground: #64755a;
-  --accent: #d5e0b5;
-  --accent-foreground: #40513b;
-  --destructive: #b9564a;
-  --border: #dbe1bd;
-  --input: #dbe1bd;
-  --ring: #609966;
-  --chart-1: #609966;
-  --chart-2: #9dc08b;
-  --chart-3: #40513b;
-  --chart-4: #c8d6a0;
-  --chart-5: #7fae74;
+  --background: #e9f2fa;
+  --foreground: #1b262c;
+  --card: #f5faff;
+  --card-foreground: #1b262c;
+  --popover: #f5faff;
+  --popover-foreground: #1b262c;
+  --primary: #0f4c75;
+  --primary-foreground: #eaf4fc;
+  --secondary: #cfe6f8;
+  --secondary-foreground: #0f4c75;
+  --muted: #dcebf7;
+  --muted-foreground: #4a6373;
+  --accent: #bbe1fa;
+  --accent-foreground: #12405f;
+  --destructive: #c04d4d;
+  --border: #c9dcec;
+  --input: #c9dcec;
+  --ring: #3282b8;
+  --chart-1: #0f4c75;
+  --chart-2: #3282b8;
+  --chart-3: #1b262c;
+  --chart-4: #bbe1fa;
+  --chart-5: #6fa8d2;
   --radius: 1rem;
-  --sidebar: #edf1d6;
-  --sidebar-foreground: #40513b;
-  --sidebar-primary: #609966;
-  --sidebar-primary-foreground: #f7fae9;
-  --sidebar-accent: #e0e7c3;
-  --sidebar-accent-foreground: #40513b;
+  --sidebar: #e9f2fa;
+  --sidebar-foreground: #1b262c;
+  --sidebar-primary: #0f4c75;
+  --sidebar-primary-foreground: #eaf4fc;
+  --sidebar-accent: #d4e8f9;
+  --sidebar-accent-foreground: #0f4c75;
   --sidebar-border: transparent;
-  --sidebar-ring: #609966;
-  /* neumorphic shadow pair, derived from the base material */
-  --neu-dark: #c7cfa7;
-  --neu-light: rgba(255, 255, 255, 0.92);
+  --sidebar-ring: #3282b8;
+  /* depth pair: drop shade below, hairline light above */
+  --neu-dark: rgba(27, 38, 44, 0.16);
+  --neu-light: rgba(255, 255, 255, 0.85);
+  --glow: rgba(50, 130, 184, 0.35);
 }
 
 .dark {
-  --background: #40513b;
-  --foreground: #edf1d6;
-  --card: #40513b;
-  --card-foreground: #edf1d6;
-  --popover: #43553d;
-  --popover-foreground: #edf1d6;
-  --primary: #9dc08b;
-  --primary-foreground: #2c3827;
-  --secondary: #4b5c44;
-  --secondary-foreground: #edf1d6;
-  --muted: #495a42;
-  --muted-foreground: #c2cfae;
-  --accent: #536649;
-  --accent-foreground: #edf1d6;
-  --destructive: #e08a7d;
-  --border: #4b5c44;
-  --input: #4b5c44;
-  --ring: #9dc08b;
-  --chart-1: #9dc08b;
-  --chart-2: #609966;
-  --chart-3: #edf1d6;
-  --chart-4: #7fae74;
-  --chart-5: #c8d6a0;
-  --sidebar: #40513b;
-  --sidebar-foreground: #edf1d6;
-  --sidebar-primary: #9dc08b;
-  --sidebar-primary-foreground: #2c3827;
-  --sidebar-accent: #4b5c44;
-  --sidebar-accent-foreground: #edf1d6;
+  --background: #1b262c;
+  --foreground: #dcecf7;
+  --card: #212f38;
+  --card-foreground: #dcecf7;
+  --popover: #243440;
+  --popover-foreground: #dcecf7;
+  --primary: #3282b8;
+  --primary-foreground: #f2f9ff;
+  --secondary: #0f4c75;
+  --secondary-foreground: #bbe1fa;
+  --muted: #26363f;
+  --muted-foreground: #8fadc0;
+  --accent: #2a3d49;
+  --accent-foreground: #bbe1fa;
+  --destructive: #e0847d;
+  --border: rgba(187, 225, 250, 0.1);
+  --input: rgba(187, 225, 250, 0.12);
+  --ring: #3282b8;
+  --chart-1: #3282b8;
+  --chart-2: #bbe1fa;
+  --chart-3: #0f4c75;
+  --chart-4: #6fa8d2;
+  --chart-5: #8fc7ec;
+  --sidebar: #1b262c;
+  --sidebar-foreground: #dcecf7;
+  --sidebar-primary: #3282b8;
+  --sidebar-primary-foreground: #f2f9ff;
+  --sidebar-accent: #26363f;
+  --sidebar-accent-foreground: #bbe1fa;
   --sidebar-border: transparent;
-  --sidebar-ring: #9dc08b;
-  --neu-dark: #313f2c;
-  --neu-light: rgba(125, 148, 111, 0.35);
+  --sidebar-ring: #3282b8;
+  --neu-dark: rgba(6, 12, 16, 0.55);
+  --neu-light: rgba(187, 225, 250, 0.07);
+  --glow: rgba(50, 130, 184, 0.45);
 }
 
-/* ── Neumorphic utilities (usable as class names, incl. variants) ───── */
+/* ── Depth utilities (usable as class names, incl. variants) ─────────
+   raised = drop shadow below + hairline light on the top edge
+   inset  = carved into the surface */
 
 @utility neu-raised {
   background-color: var(--card);
   border-color: transparent;
   box-shadow:
-    7px 7px 14px var(--neu-dark),
-    -7px -7px 14px var(--neu-light);
+    0 12px 28px -12px var(--neu-dark),
+    0 2px 6px -2px var(--neu-dark),
+    inset 0 1px 0 var(--neu-light);
 }
 
 @utility neu-raised-sm {
   border-color: transparent;
   box-shadow:
-    3px 3px 7px var(--neu-dark),
-    -3px -3px 7px var(--neu-light);
+    0 4px 12px -4px var(--neu-dark),
+    inset 0 1px 0 var(--neu-light);
 }
 
 @utility neu-inset {
   border-color: transparent;
   box-shadow:
-    inset 4px 4px 8px var(--neu-dark),
-    inset -4px -4px 8px var(--neu-light);
+    inset 0 3px 8px -2px var(--neu-dark),
+    inset 0 -1px 0 var(--neu-light);
 }
 
 @utility neu-inset-sm {
   border-color: transparent;
-  box-shadow:
-    inset 2px 2px 5px var(--neu-dark),
-    inset -2px -2px 5px var(--neu-light);
+  box-shadow: inset 0 2px 6px -2px var(--neu-dark);
 }
 
 /* raised panel for table wrappers and free-form tiles */
 @utility neu-panel {
   background-color: var(--card);
-  border-color: transparent;
+  border: 1px solid var(--border);
   border-radius: var(--radius-xl);
   box-shadow:
-    7px 7px 14px var(--neu-dark),
-    -7px -7px 14px var(--neu-light);
+    0 12px 28px -12px var(--neu-dark),
+    0 2px 6px -2px var(--neu-dark),
+    inset 0 1px 0 var(--neu-light);
+}
+
+/* quiet blue glow for primary emphasis */
+@utility glow-primary {
+  box-shadow:
+    0 6px 20px -6px var(--glow),
+    inset 0 1px 0 var(--neu-light);
 }
 
 @layer base {
@@ -188,26 +200,28 @@
   [data-slot="dialog-title"],
   [data-slot="alert-dialog-title"] {
     font-family: var(--font-heading);
-    letter-spacing: -0.01em;
+    letter-spacing: -0.015em;
   }
 }
 
-/* ── Neumorphism applied to shadcn primitives via data-slot ───────────
+/* ── Depth applied to shadcn primitives via data-slot ─────────────────
    Intentionally UNLAYERED: unlayered rules beat Tailwind's layered
    utilities (shadow-sm, bg-transparent, border-input) that ship inside
    the shadcn components. */
 
-/* surfaces are molded, not outlined */
+/* surfaces float on soft depth with a hairline border for definition */
 [data-slot="card"] {
   background-color: var(--card);
-  border-color: transparent;
+  border: 1px solid var(--border);
   border-radius: var(--radius-xl);
   box-shadow:
-    7px 7px 14px var(--neu-dark),
-    -7px -7px 14px var(--neu-light);
+    0 12px 28px -12px var(--neu-dark),
+    0 2px 6px -2px var(--neu-dark),
+    inset 0 1px 0 var(--neu-light);
+  transition: box-shadow 0.25s ease, transform 0.25s ease;
 }
 
-/* floating layers keep a soft lift plus a faint edge for separation */
+/* floating layers lift a little further */
 [data-slot="dialog-content"],
 [data-slot="alert-dialog-content"],
 [data-slot="dropdown-menu-content"],
@@ -215,82 +229,94 @@
 [data-slot="select-content"],
 [data-slot="popover-content"] {
   background-color: var(--popover);
-  border-color: color-mix(in oklab, var(--neu-dark) 55%, transparent);
+  border: 1px solid var(--border);
   box-shadow:
-    9px 9px 20px var(--neu-dark),
-    -6px -6px 16px var(--neu-light);
+    0 20px 44px -16px var(--neu-dark),
+    0 4px 10px -4px var(--neu-dark),
+    inset 0 1px 0 var(--neu-light);
 }
 
 /* fields are carved into the surface */
 [data-slot="input"],
 [data-slot="textarea"],
 [data-slot="select-trigger"] {
-  background-color: color-mix(in oklab, var(--background) 92%, var(--neu-dark));
-  border-color: transparent;
-  box-shadow:
-    inset 2px 2px 5px var(--neu-dark),
-    inset -2px -2px 5px var(--neu-light);
+  background-color: color-mix(in oklab, var(--background) 80%, var(--card));
+  border: 1px solid var(--border);
+  box-shadow: inset 0 2px 6px -2px var(--neu-dark);
 }
 
 /* tab rail is a groove; the active tab pops out of it */
 [data-slot="tabs-list"] {
-  background-color: transparent;
+  background-color: color-mix(in oklab, var(--background) 75%, var(--card));
   border-radius: var(--radius-lg);
-  box-shadow:
-    inset 2px 2px 5px var(--neu-dark),
-    inset -2px -2px 5px var(--neu-light);
+  box-shadow: inset 0 2px 6px -2px var(--neu-dark);
   padding: 4px;
 }
 [data-slot="tabs-trigger"][data-active] {
   background-color: var(--card);
   box-shadow:
-    3px 3px 7px var(--neu-dark),
-    -3px -3px 7px var(--neu-light);
+    0 4px 12px -4px var(--neu-dark),
+    inset 0 1px 0 var(--neu-light);
 }
 
 /* table panels: page wrappers and the shared shadcn container */
 [data-slot="table-container"] {
   background-color: var(--card);
-  border-color: transparent;
+  border: 1px solid var(--border);
   border-radius: var(--radius-xl);
   box-shadow:
-    7px 7px 14px var(--neu-dark),
-    -7px -7px 14px var(--neu-light);
+    0 12px 28px -12px var(--neu-dark),
+    0 2px 6px -2px var(--neu-dark),
+    inset 0 1px 0 var(--neu-light);
 }
 div.rounded-lg.border:has(> [data-slot="table-container"]),
 div.rounded-lg.border:has(> table) {
   background-color: var(--card);
-  border-color: transparent;
+  border: 1px solid var(--border);
   border-radius: var(--radius-xl);
   box-shadow:
-    7px 7px 14px var(--neu-dark),
-    -7px -7px 14px var(--neu-light);
+    0 12px 28px -12px var(--neu-dark),
+    0 2px 6px -2px var(--neu-dark),
+    inset 0 1px 0 var(--neu-light);
 }
-/* avoid double shadows when the shadcn container sits inside a styled wrapper */
+/* avoid double depth when the shadcn container sits inside a styled wrapper */
 div.rounded-lg.border [data-slot="table-container"],
 [data-slot="card"] [data-slot="table-container"] {
   background-color: transparent;
+  border: none;
   border-radius: 0;
   box-shadow: none;
 }
 
-/* active nav item is pressed into the sidebar */
+/* table rows respond to hover — nothing feels static */
+[data-slot="table-body"] tr {
+  transition: background-color 0.15s ease;
+}
+[data-slot="table-body"] tr:hover {
+  background-color: color-mix(in oklab, var(--accent) 30%, transparent);
+}
+
+/* active nav item is pressed into the sidebar with an accent bar */
 [data-slot="sidebar-menu-button"][data-active="true"] {
-  background-color: color-mix(in oklab, var(--background) 90%, var(--neu-dark));
-  color: var(--primary);
-  font-weight: 700;
+  background: linear-gradient(
+    90deg,
+    color-mix(in oklab, var(--primary) 22%, transparent),
+    transparent 85%
+  );
+  color: var(--sidebar-accent-foreground);
+  font-weight: 600;
   box-shadow:
-    inset 2px 2px 5px var(--neu-dark),
-    inset -2px -2px 5px var(--neu-light);
+    inset 2px 0 0 var(--primary),
+    inset 0 2px 6px -2px var(--neu-dark);
 }
 
 [data-slot="badge"] {
-  border-color: transparent;
+  border-color: var(--border);
 }
 
-/* the sidebar is part of the same slab — soft edge instead of a line */
+/* the sidebar is a soft edge, not a hard line */
 [data-slot="sidebar-inner"] {
-  box-shadow: 6px 0 14px -6px var(--neu-dark);
+  box-shadow: 8px 0 24px -12px var(--neu-dark);
 }
 
 @media (prefers-reduced-motion: reduce) {
