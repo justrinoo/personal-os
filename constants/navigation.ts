@@ -6,6 +6,7 @@ import {
   FolderKanban,
   LayoutDashboard,
   ListTodo,
+  Ticket,
   type LucideIcon,
 } from "lucide-react";
 
@@ -31,6 +32,7 @@ export const NAV_SECTIONS: NavSection[] = [
       { title: "Workspaces", href: "/workspaces", icon: Boxes },
       { title: "Projects", href: "/projects", icon: FolderKanban },
       { title: "Tasks", href: "/tasks", icon: ListTodo },
+      { title: "ClickUp", href: "/clickup", icon: Ticket },
       { title: "Activities", href: "/activities", icon: Activity },
     ],
   },

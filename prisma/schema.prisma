@@ -264,6 +264,7 @@ model Task {
   // External integration IDs (ClickUp sync — store IDs, never duplicate remote data)
   clickupId             String?   @unique
   clickupUrl            String?
+  clickupStatus         String? // raw remote status name (lowercase)
   clickupRemoteUpdatedAt DateTime?
   gitBranch   String?
   projectId   String?

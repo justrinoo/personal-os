@@ -88,18 +88,19 @@ export function ClickUpCell({
           <DialogHeader>
             <DialogTitle>Link ClickUp List</DialogTitle>
             <DialogDescription>
-              Tasks from this list will sync into the project. Find the list ID
-              in the ClickUp URL: <code>…/v/li/&lt;list-id&gt;</code>
+              Paste a ticket ID, a ticket URL, or a list ID — if you paste a
+              ticket, its parent list gets linked and all tickets in that list
+              will sync into this project.
             </DialogDescription>
           </DialogHeader>
           <div className="flex flex-col gap-4">
             <div className="flex flex-col gap-2">
-              <Label htmlFor="cu-list-id">List ID</Label>
+              <Label htmlFor="cu-list-id">Ticket ID, URL, or list ID</Label>
               <Input
                 id="cu-list-id"
                 value={inputListId}
                 onChange={(event) => setInputListId(event.target.value)}
-                placeholder="901234567"
+                placeholder="86d3nfnt7 or https://app.clickup.com/t/…"
               />
             </div>
             <Button onClick={handleLink} disabled={pending || !inputListId.trim()}>

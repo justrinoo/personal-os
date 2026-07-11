@@ -46,23 +46,37 @@ function getToken(): string {
   return token;
 }
 
+/** Surfaces ClickUp's own error message ("err" field) instead of a bare status. */
+async function throwClickUpError(response: Response): Promise<never> {
+  let detail = "";
+  try {
+    const body = (await response.json()) as { err?: string };
+    detail = body.err ?? "";
+  } catch {
+    // non-JSON body — keep the status-based message
+  }
+  if (response.status === 401) {
+    throw new ClickUpError("ClickUp rejected the token (401) — check CLICKUP_TOKEN and restart the dev server");
+  }
+  if (response.status === 404) {
+    throw new ClickUpError("Not found in ClickUp (404) — check the ID");
+  }
+  if (response.status === 429) {
+    throw new ClickUpError("ClickUp rate limit hit (429) — try again in a minute");
+  }
+  throw new ClickUpError(
+    detail
+      ? `ClickUp error (${response.status}): ${detail}`
+      : `ClickUp API error (${response.status})`
+  );
+}
+
 async function clickupFetch<T>(path: string): Promise<T> {
   const response = await fetch(`${CLICKUP_API}${path}`, {
     headers: { Authorization: getToken() },
     cache: "no-store",
   });
-  if (response.status === 401) {
-    throw new ClickUpError("ClickUp rejected the token (401) — check CLICKUP_TOKEN");
-  }
-  if (response.status === 404) {
-    throw new ClickUpError("ClickUp list not found (404) — check the list ID");
-  }
-  if (response.status === 429) {
-    throw new ClickUpError("ClickUp rate limit hit (429) — try again in a minute");
-  }
-  if (!response.ok) {
-    throw new ClickUpError(`ClickUp API error (${response.status})`);
-  }
+  if (!response.ok) await throwClickUpError(response);
   return response.json() as Promise<T>;
 }
 
@@ -72,6 +86,73 @@ export async function fetchList(listId: string): Promise<RemoteList> {
     `/list/${encodeURIComponent(listId)}`
   );
   return { id: list.id, name: list.name };
+}
+
+/** The list a ClickUp task belongs to. */
+export async function fetchTaskList(taskId: string): Promise<RemoteList> {
+  const task = await clickupFetch<{
+    list?: { id: string; name: string };
+  }>(`/task/${encodeURIComponent(taskId)}`);
+  if (!task.list?.id) {
+    throw new ClickUpError("ClickUp task found, but it has no parent list");
+  }
+  return { id: task.list.id, name: task.list.name };
+}
+
+/**
+ * Resolves any user-pasted ClickUp reference to a list:
+ * a numeric list ID, a ticket ID (e.g. "86d3nb3aj"), a task URL
+ * (…/t/<id>), or a list URL (…/v/li/<id>).
+ */
+export async function resolveListReference(raw: string): Promise<RemoteList> {
+  const input = raw.trim();
+  // task URLs: app.clickup.com/t/<task-id> or /t/<team-id>/<task-id>
+  const taskUrl = input.match(/\/t\/(?:\d+\/)?([a-z0-9_-]+)/i);
+  if (taskUrl) return fetchTaskList(taskUrl[1]);
+  const listUrl = input.match(/\/li\/(\d+)/i);
+  if (listUrl) return fetchList(listUrl[1]);
+  if (/^\d+$/.test(input)) return fetchList(input);
+  return fetchTaskList(input);
+}
+
+/** The status options configured on a ClickUp list, in board order. */
+export async function fetchListStatuses(listId: string): Promise<string[]> {
+  const list = await clickupFetch<{
+    statuses?: { status: string; orderindex?: number }[];
+  }>(`/list/${encodeURIComponent(listId)}`);
+  return (list.statuses ?? []).map((s) => s.status.toLowerCase());
+}
+
+// ClickUp priority levels: 1=urgent, 2=high, 3=normal, 4=low
+const PRIORITY_TO_REMOTE: Record<Priority, number> = {
+  URGENT: 1,
+  HIGH: 2,
+  MEDIUM: 3,
+  LOW: 4,
+};
+
+/** Pushes a status and/or priority change to ClickUp. */
+export async function updateRemoteTask(
+  taskId: string,
+  change: { status?: string; priority?: Priority }
+): Promise<void> {
+  const body: Record<string, unknown> = {};
+  if (change.status) body.status = change.status;
+  if (change.priority) body.priority = PRIORITY_TO_REMOTE[change.priority];
+
+  const response = await fetch(
+    `${CLICKUP_API}/task/${encodeURIComponent(taskId)}`,
+    {
+      method: "PUT",
+      headers: {
+        Authorization: getToken(),
+        "Content-Type": "application/json",
+      },
+      body: JSON.stringify(body),
+      cache: "no-store",
+    }
+  );
+  if (!response.ok) await throwClickUpError(response);
 }
 
 const PRIORITY_MAP: Record<string, Priority> = {

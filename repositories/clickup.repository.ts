@@ -1,5 +1,9 @@
 import { prisma } from "@/lib/prisma";
-import type { TaskStatus } from "@/lib/generated/prisma/client";
+import type {
+  Priority,
+  Prisma,
+  TaskStatus,
+} from "@/lib/generated/prisma/client";
 import type { RemoteTask } from "@/services/clickup.service";
 
 export function linkProjectToList(
@@ -66,6 +70,7 @@ export function upsertSyncedTask(
     priority: remote.priority,
     dueDate: remote.dueDate,
     clickupUrl: remote.url,
+    clickupStatus: remote.status,
     clickupRemoteUpdatedAt: remote.remoteUpdatedAt,
   };
   return prisma.task.upsert({
@@ -84,5 +89,55 @@ export function markProjectSynced(projectId: string) {
   return prisma.project.update({
     where: { id: projectId },
     data: { clickupSyncedAt: new Date() },
+  });
+}
+
+export type ClickUpTicket = Prisma.TaskGetPayload<{
+  include: { project: true };
+}>;
+
+/** All locally synced ClickUp tickets, newest remote change first. */
+export function listClickUpTickets(): Promise<ClickUpTicket[]> {
+  return prisma.task.findMany({
+    where: { clickupId: { not: null } },
+    include: { project: true },
+    orderBy: { clickupRemoteUpdatedAt: "desc" },
+  });
+}
+
+/** Projects that have a ClickUp list linked. */
+export function listLinkedProjects() {
+  return prisma.project.findMany({
+    where: { clickupListId: { not: null } },
+    select: {
+      id: true,
+      name: true,
+      clickupListId: true,
+      clickupSyncedAt: true,
+    },
+    orderBy: { name: "asc" },
+  });
+}
+
+/** Resolves a local task to its ClickUp reference and the linked list. */
+export function getTaskClickUpRef(taskId: string) {
+  return prisma.task.findUnique({
+    where: { id: taskId },
+    select: {
+      id: true,
+      clickupId: true,
+      project: { select: { clickupListId: true } },
+    },
+  });
+}
+
+/** Applies a change that was successfully pushed to ClickUp to the local row. */
+export function applyLocalTicketChange(
+  taskId: string,
+  change: { status?: TaskStatus; clickupStatus?: string; priority?: Priority }
+) {
+  return prisma.task.update({
+    where: { id: taskId },
+    data: { ...change, clickupRemoteUpdatedAt: new Date() },
   });
 }

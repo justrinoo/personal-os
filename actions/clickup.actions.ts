@@ -4,9 +4,12 @@ import { revalidatePath } from "next/cache";
 import { z } from "zod";
 
 import {
+  applyLocalTicketChange,
   getProjectClickUpLink,
   getStatusMap,
+  getTaskClickUpRef,
   linkProjectToList,
+  listLinkedProjects,
   markProjectSynced,
   saveStatusMapping,
   unlinkProjectFromList,
@@ -15,17 +18,27 @@ import {
 import {
   ClickUpError,
   fetchAllListTasks,
-  fetchList,
+  fetchListStatuses,
   guessLocalStatus,
+  resolveListReference,
+  updateRemoteTask,
 } from "@/services/clickup.service";
+import { PRIORITIES } from "@/constants/enums";
 import { isAuthenticated } from "@/lib/require-auth";
 import { ACTION_OK, actionError, type ActionResult } from "@/types/action";
 
-const listIdSchema = z.string().trim().min(1, "List ID is required").max(50);
+const listReferenceSchema = z
+  .string()
+  .trim()
+  .min(1, "Paste a ClickUp list ID, ticket ID, or URL")
+  .max(300);
+const prioritySchema = z.enum(PRIORITIES);
+const remoteStatusSchema = z.string().trim().min(1).max(100);
 
 function revalidate() {
   revalidatePath("/projects");
   revalidatePath("/tasks");
+  revalidatePath("/clickup");
   revalidatePath("/");
 }
 
@@ -36,15 +49,15 @@ function toActionError(error: unknown, fallback: string): ActionResult {
 
 export async function linkClickUpListAction(
   projectId: string,
-  listId: string
+  listReference: string
 ): Promise<ActionResult> {
   if (!(await isAuthenticated())) return actionError("Unauthorized");
-  const parsed = listIdSchema.safeParse(listId);
+  const parsed = listReferenceSchema.safeParse(listReference);
   if (!parsed.success) {
-    return actionError(parsed.error.issues[0]?.message ?? "Invalid list ID");
+    return actionError(parsed.error.issues[0]?.message ?? "Invalid reference");
   }
   try {
-    const list = await fetchList(parsed.data);
+    const list = await resolveListReference(parsed.data);
     await linkProjectToList(projectId, list.id, list.name);
     revalidate();
     return ACTION_OK;
@@ -70,6 +83,26 @@ export interface SyncResult extends ActionResult {
   synced?: number;
 }
 
+async function syncProject(projectId: string, listId: string): Promise<number> {
+  const [remoteTasks, statusMap] = await Promise.all([
+    fetchAllListTasks(listId),
+    getStatusMap(),
+  ]);
+
+  for (const remote of remoteTasks) {
+    let status = statusMap[remote.status];
+    if (!status) {
+      status = guessLocalStatus(remote.status);
+      await saveStatusMapping(remote.status, status);
+      statusMap[remote.status] = status;
+    }
+    await upsertSyncedTask(projectId, remote, status);
+  }
+
+  await markProjectSynced(projectId);
+  return remoteTasks.length;
+}
+
 export async function syncClickUpAction(
   projectId: string
 ): Promise<SyncResult> {
@@ -79,26 +112,101 @@ export async function syncClickUpAction(
     if (!link?.clickupListId) {
       return actionError("Project has no linked ClickUp list");
     }
-
-    const [remoteTasks, statusMap] = await Promise.all([
-      fetchAllListTasks(link.clickupListId),
-      getStatusMap(),
-    ]);
-
-    for (const remote of remoteTasks) {
-      let status = statusMap[remote.status];
-      if (!status) {
-        status = guessLocalStatus(remote.status);
-        await saveStatusMapping(remote.status, status);
-        statusMap[remote.status] = status;
-      }
-      await upsertSyncedTask(projectId, remote, status);
-    }
-
-    await markProjectSynced(projectId);
+    const synced = await syncProject(projectId, link.clickupListId);
     revalidate();
-    return { ok: true, synced: remoteTasks.length };
+    return { ok: true, synced };
   } catch (error) {
     return toActionError(error, "Sync failed");
+  }
+}
+
+export async function syncAllClickUpAction(): Promise<SyncResult> {
+  if (!(await isAuthenticated())) return actionError("Unauthorized");
+  try {
+    const projects = await listLinkedProjects();
+    if (projects.length === 0) {
+      return actionError("No projects have a linked ClickUp list yet");
+    }
+    let total = 0;
+    for (const project of projects) {
+      total += await syncProject(project.id, project.clickupListId as string);
+    }
+    revalidate();
+    return { ok: true, synced: total };
+  } catch (error) {
+    return toActionError(error, "Sync failed");
+  }
+}
+
+export interface StatusOptionsResult extends ActionResult {
+  statuses?: string[];
+}
+
+/** Remote status options for the list a ticket belongs to. */
+export async function getTicketStatusOptionsAction(
+  taskId: string
+): Promise<StatusOptionsResult> {
+  if (!(await isAuthenticated())) return actionError("Unauthorized");
+  try {
+    const ref = await getTaskClickUpRef(taskId);
+    if (!ref?.clickupId || !ref.project?.clickupListId) {
+      return actionError("Task is not linked to ClickUp");
+    }
+    const statuses = await fetchListStatuses(ref.project.clickupListId);
+    return { ok: true, statuses };
+  } catch (error) {
+    return toActionError(error, "Failed to load ClickUp statuses");
+  }
+}
+
+/** Pushes a status change to ClickUp, then mirrors it locally. */
+export async function setTicketStatusAction(
+  taskId: string,
+  remoteStatus: string
+): Promise<ActionResult> {
+  if (!(await isAuthenticated())) return actionError("Unauthorized");
+  const parsed = remoteStatusSchema.safeParse(remoteStatus);
+  if (!parsed.success) return actionError("Invalid status");
+  try {
+    const ref = await getTaskClickUpRef(taskId);
+    if (!ref?.clickupId) return actionError("Task is not linked to ClickUp");
+
+    await updateRemoteTask(ref.clickupId, { status: parsed.data });
+
+    const statusMap = await getStatusMap();
+    let localStatus = statusMap[parsed.data.toLowerCase()];
+    if (!localStatus) {
+      localStatus = guessLocalStatus(parsed.data);
+      await saveStatusMapping(parsed.data.toLowerCase(), localStatus);
+    }
+    await applyLocalTicketChange(taskId, {
+      status: localStatus,
+      clickupStatus: parsed.data.toLowerCase(),
+    });
+    revalidate();
+    return ACTION_OK;
+  } catch (error) {
+    return toActionError(error, "Failed to update ClickUp status");
+  }
+}
+
+/** Pushes a priority change to ClickUp, then mirrors it locally. */
+export async function setTicketPriorityAction(
+  taskId: string,
+  priority: string
+): Promise<ActionResult> {
+  if (!(await isAuthenticated())) return actionError("Unauthorized");
+  const parsed = prioritySchema.safeParse(priority);
+  if (!parsed.success) return actionError("Invalid priority");
+  try {
+    const ref = await getTaskClickUpRef(taskId);
+    if (!ref?.clickupId) return actionError("Task is not linked to ClickUp");
+
+    await updateRemoteTask(ref.clickupId, { priority: parsed.data });
+    await applyLocalTicketChange(taskId, { priority: parsed.data });
+    revalidate();
+    return ACTION_OK;
+  } catch (error) {
+    return toActionError(error, "Failed to update ClickUp priority");
   }
 }
