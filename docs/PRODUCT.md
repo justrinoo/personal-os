@@ -15,7 +15,7 @@ engineering work and personal productivity in a single connected system.
 | Features | 🔲 Model only | Deliverable feature units linking sprints, tasks, deployments |
 | Tasks | ✅ Live | Development work: type, status, priority, due date, ClickUp ID |
 | Daily Activities | ✅ Live | Everything I do: coding, meetings, learning, workout, with mood/productivity |
-| ClickUp Sync | 🔜 Phase 4 | Two-way ticket synchronization |
+| ClickUp Sync | ✅ Live (read-only) | Link a list per project, "Sync now" upserts tickets by `clickupId`; two-way + webhooks later |
 | Git Integration | 🔜 Phase 5 | Repos, branches, commits, PRs |
 | Deployments | 🔜 Phase 6 | Deployment history per environment with rollback tracking |
 | Monitoring | 🔜 Phase 7 | Server/API/uptime signals and incidents |

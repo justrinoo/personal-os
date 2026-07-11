@@ -16,6 +16,7 @@ import {
   TableHeader,
   TableRow,
 } from "@/components/ui/table";
+import { ClickUpCell } from "@/features/clickup/components/clickup-cell";
 import { ProjectFormDialog } from "@/features/projects/components/project-form-dialog";
 import { safeQuery } from "@/lib/safe-query";
 import { listProjects } from "@/repositories/project.repository";
@@ -67,7 +68,7 @@ export default async function ProjectsPage() {
                   <TableHead>Client</TableHead>
                   <TableHead>Status</TableHead>
                   <TableHead className="text-right">Tasks</TableHead>
-                  <TableHead className="text-right">Features</TableHead>
+                  <TableHead>ClickUp</TableHead>
                   <TableHead className="text-right">Updated</TableHead>
                   <TableHead className="w-20" />
                 </TableRow>
@@ -88,8 +89,13 @@ export default async function ProjectsPage() {
                     <TableCell className="text-right tabular-nums">
                       {project._count.tasks}
                     </TableCell>
-                    <TableCell className="text-right tabular-nums">
-                      {project._count.features}
+                    <TableCell>
+                      <ClickUpCell
+                        projectId={project.id}
+                        listId={project.clickupListId}
+                        listName={project.clickupListName}
+                        syncedAt={project.clickupSyncedAt}
+                      />
                     </TableCell>
                     <TableCell className="text-right text-muted-foreground">
                       {formatDate(project.updatedAt)}

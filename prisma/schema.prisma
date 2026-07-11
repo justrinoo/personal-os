@@ -143,6 +143,10 @@ model Project {
   clientId      String?
   startDate     DateTime?
   endDate       DateTime?
+  // ClickUp integration: linked list (one per project) + last sync time
+  clickupListId   String?   @unique
+  clickupListName String?
+  clickupSyncedAt DateTime?
   createdAt     DateTime      @default(now())
   updatedAt     DateTime      @updatedAt
 
@@ -258,7 +262,9 @@ model Task {
   priority    Priority   @default(MEDIUM)
   dueDate     DateTime?
   // External integration IDs (ClickUp sync — store IDs, never duplicate remote data)
-  clickupId   String?    @unique
+  clickupId             String?   @unique
+  clickupUrl            String?
+  clickupRemoteUpdatedAt DateTime?
   gitBranch   String?
   projectId   String?
   featureId   String?
@@ -271,6 +277,20 @@ model Task {
   sprint  Sprint?  @relation(fields: [sprintId], references: [id], onDelete: SetNull)
 
   @@map("tasks")
+}
+
+// ─────────────────────────────────────────────
+// ClickUp status mapping (self-populating config)
+// ─────────────────────────────────────────────
+
+model ClickUpStatusMap {
+  id           String     @id @default(cuid())
+  remoteStatus String     @unique // lowercase ClickUp status name
+  localStatus  TaskStatus
+  createdAt    DateTime   @default(now())
+  updatedAt    DateTime   @updatedAt
+
+  @@map("clickup_status_map")
 }
 
 // ─────────────────────────────────────────────

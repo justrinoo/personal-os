@@ -1,5 +1,5 @@
 import type { Metadata } from "next";
-import { ListTodo, Pencil, Plus } from "lucide-react";
+import { ExternalLink, ListTodo, Pencil, Plus } from "lucide-react";
 
 import { deleteTaskAction } from "@/actions/task.actions";
 import { PageHeader } from "@/components/layout/page-header";
@@ -74,7 +74,22 @@ export default async function TasksPage() {
               <TableBody>
                 {tasks.data.map((task) => (
                   <TableRow key={task.id}>
-                    <TableCell className="font-medium">{task.title}</TableCell>
+                    <TableCell className="font-medium">
+                      <span className="inline-flex items-center gap-1.5">
+                        {task.title}
+                        {task.clickupUrl ? (
+                          <a
+                            href={task.clickupUrl}
+                            target="_blank"
+                            rel="noreferrer"
+                            title="Open in ClickUp"
+                            className="text-muted-foreground hover:text-foreground"
+                          >
+                            <ExternalLink className="size-3.5" />
+                          </a>
+                        ) : null}
+                      </span>
+                    </TableCell>
                     <TableCell className="text-muted-foreground">
                       {task.project?.name ?? "—"}
                     </TableCell>
