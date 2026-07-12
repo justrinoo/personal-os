@@ -3,6 +3,7 @@ import {
   BookOpen,
   Boxes,
   CalendarCheck,
+  ChartColumn,
   FolderKanban,
   GraduationCap,
   HeartPulse,
@@ -27,7 +28,10 @@ export interface NavSection {
 export const NAV_SECTIONS: NavSection[] = [
   {
     label: "Overview",
-    items: [{ title: "Dashboard", href: "/", icon: LayoutDashboard }],
+    items: [
+      { title: "Dashboard", href: "/", icon: LayoutDashboard },
+      { title: "Reports", href: "/reports", icon: ChartColumn },
+    ],
   },
   {
     label: "Work",

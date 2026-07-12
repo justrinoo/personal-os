@@ -15,8 +15,8 @@ work is committed. Details per phase live in [roadmap/](./roadmap/).
 | 08 | [Journal+](./roadmap/phase-08-journal.md) | ✅ Done | 2026-07-12 |
 | 09 | [Habits+](./roadmap/phase-09-habit.md) | ✅ Done | 2026-07-12 |
 | 10 | [Learning](./roadmap/phase-10-learning.md) | ✅ Done | 2026-07-12 |
-| 11 | [Reports](./roadmap/phase-11-reports.md) | 🔜 Next | — |
-| 12 | [AI](./roadmap/phase-12-ai.md) | Planned | — |
+| 11 | [Reports](./roadmap/phase-11-reports.md) | ✅ Done | 2026-07-12 |
+| 12 | [AI](./roadmap/phase-12-ai.md) | 🔜 Next | — |
 | — | [Release v1](./roadmap/release-v1.md) | Gate | — |
 
 ## After v1

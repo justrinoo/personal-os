@@ -344,6 +344,23 @@ div.rounded-lg.border [data-slot="table-container"],
   border-right: 1px solid var(--sidebar-border);
 }
 
+/* print-friendly reports: hide chrome, keep content */
+@media print {
+  [data-slot="sidebar-inner"],
+  header,
+  button {
+    display: none !important;
+  }
+  main {
+    padding: 0 !important;
+  }
+  [data-slot="card"],
+  .neu-panel {
+    box-shadow: none !important;
+    border: 1px solid var(--border) !important;
+  }
+}
+
 @media (prefers-reduced-motion: reduce) {
   *,
   *::before,

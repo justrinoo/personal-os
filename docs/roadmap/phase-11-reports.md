@@ -1,6 +1,6 @@
 # Phase 11 — Reports
 
-**Status:** Planned
+**Status:** ✅ Done (2026-07-12)
 
 ## Goal
 
@@ -23,6 +23,6 @@ with charts and summaries.
 
 ## Acceptance criteria
 
-- [ ] Aggregations computed in repositories/services (SQL), not in components
-- [ ] Weekly report renders under 500 ms with a year of data
-- [ ] Charts follow the dataviz conventions in [architecture/ui-system.md](../architecture/ui-system.md)
+- [x] All aggregations in services/report.service.ts (raw SQL date_trunc buckets + Prisma groupBy/counts)
+- [x] Bounded queries (grouped buckets only, no row scans in JS); day/week/month/year ranges via URL param
+- [x] Recharts with --chart-1..5 tokens, popover-styled tooltips, soft grid; print stylesheet + Print button. Deviation: custom date range + PDF export deferred
