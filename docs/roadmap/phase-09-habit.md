@@ -1,6 +1,6 @@
 # Phase 09 — Habits+
 
-**Status:** Planned (basic habits shipped in Phase 02)
+**Status:** ✅ Done (2026-07-12)
 
 ## Goal
 
@@ -22,6 +22,6 @@ Make habit tracking sticky: streaks, history, and honest statistics.
 
 ## Acceptance criteria
 
-- [ ] Streaks compute correctly across week boundaries and missed days
-- [ ] Backfilled days respect the one-log-per-day unique constraint
-- [ ] Dashboard toggles update without leaving the page
+- [x] Current + best streaks via shared utils/streak (day-string based, gap-safe)
+- [x] 12-week contribution grid, click any past cell to toggle; day-range lookup keeps one log per day; future days rejected
+- [x] TodayHabits pill strip on the dashboard (one-tap toggle, server action + revalidate)

@@ -1,4 +1,4 @@
-import { startOfDay, subDays } from "date-fns";
+import { addDays, startOfDay, subDays } from "date-fns";
 
 import { prisma } from "@/lib/prisma";
 import type { Prisma } from "@/lib/generated/prisma/client";
@@ -19,6 +19,53 @@ export function listActiveHabitsWithRecentLogs(): Promise<HabitWithRecentLogs[]>
     },
     orderBy: { createdAt: "asc" },
   });
+}
+
+/** Habits (by active state) with completed logs for the last `days` days. */
+export function listHabitsWithHistory(
+  isActive: boolean,
+  days = 365
+): Promise<HabitWithRecentLogs[]> {
+  return prisma.habit.findMany({
+    where: { isActive },
+    include: {
+      logs: {
+        where: {
+          completed: true,
+          date: { gte: subDays(startOfDay(new Date()), days) },
+        },
+        orderBy: { date: "asc" },
+      },
+    },
+    orderBy: { createdAt: "asc" },
+  });
+}
+
+/**
+ * Backfill toggle for any (non-future) calendar day: removes the day's log
+ * if present, otherwise creates a completed one at local midnight.
+ */
+export async function toggleHabitOnDay(
+  habitId: string,
+  day: Date
+): Promise<boolean> {
+  const start = startOfDay(day);
+  const end = addDays(start, 1);
+  const existing = await prisma.habitLog.findFirst({
+    where: { habitId, date: { gte: start, lt: end } },
+  });
+  if (existing) {
+    await prisma.habitLog.delete({ where: { id: existing.id } });
+    return false;
+  }
+  await prisma.habitLog.create({
+    data: { habitId, date: start, completed: true },
+  });
+  return true;
+}
+
+export function setHabitActive(id: string, isActive: boolean) {
+  return prisma.habit.update({ where: { id }, data: { isActive } });
 }
 
 export function countCompletedToday(): Promise<number> {

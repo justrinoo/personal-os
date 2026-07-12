@@ -5,6 +5,8 @@ import { revalidatePath } from "next/cache";
 import {
   createHabit,
   deleteHabit,
+  setHabitActive,
+  toggleHabitOnDay,
   toggleHabitToday,
   updateHabit,
 } from "@/repositories/habit.repository";
@@ -82,5 +84,39 @@ export async function toggleHabitTodayAction(
     return ACTION_OK;
   } catch {
     return actionError("Failed to update habit log");
+  }
+}
+
+/** Backfill: toggle a habit log on any past day (yyyy-MM-dd). */
+export async function toggleHabitDayAction(
+  habitId: string,
+  day: string
+): Promise<ActionResult> {
+  if (!(await isAuthenticated())) return actionError("Unauthorized");
+  if (!/^\d{4}-\d{2}-\d{2}$/.test(day)) return actionError("Invalid day");
+  const date = new Date(`${day}T00:00:00`);
+  if (date.getTime() > Date.now()) {
+    return actionError("Future days can't be logged");
+  }
+  try {
+    await toggleHabitOnDay(habitId, date);
+    revalidate();
+    return ACTION_OK;
+  } catch {
+    return actionError("Failed to update habit log");
+  }
+}
+
+export async function setHabitActiveAction(
+  id: string,
+  isActive: boolean
+): Promise<ActionResult> {
+  if (!(await isAuthenticated())) return actionError("Unauthorized");
+  try {
+    await setHabitActive(id, isActive);
+    revalidate();
+    return ACTION_OK;
+  } catch {
+    return actionError("Failed to update habit");
   }
 }

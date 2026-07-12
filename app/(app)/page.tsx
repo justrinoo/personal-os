@@ -11,8 +11,10 @@ import {
   CardTitle,
 } from "@/components/ui/card";
 import { AnimatedStats } from "@/features/dashboard/components/animated-stats";
+import { TodayHabits } from "@/features/dashboard/components/today-habits";
 import { safeQuery } from "@/lib/safe-query";
 import { listDeployments } from "@/repositories/deployment.repository";
+import { listActiveHabitsWithRecentLogs } from "@/repositories/habit.repository";
 import { getHealthSummary } from "@/repositories/monitoring.repository";
 import {
   getDashboardStats,
@@ -36,6 +38,8 @@ export default async function DashboardPage() {
         { up: 0, down: 0, unknown: 0, activeIncidents: 0 }
       ),
     ]);
+  const todayHabits = await safeQuery(() => listActiveHabitsWithRecentLogs(), []);
+  const today = new Date().toDateString();
 
   const dbOnline = stats.ok;
 
@@ -79,6 +83,16 @@ export default async function DashboardPage() {
               icon: "habits",
             },
           ]}
+        />
+
+        <TodayHabits
+          habits={todayHabits.data.map((habit) => ({
+            id: habit.id,
+            name: habit.name,
+            doneToday: habit.logs.some(
+              (log) => log.completed && log.date.toDateString() === today
+            ),
+          }))}
         />
 
         <div className="grid gap-6 lg:grid-cols-2">
