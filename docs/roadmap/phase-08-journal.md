@@ -1,6 +1,6 @@
 # Phase 08 — Journal+
 
-**Status:** Planned (basic journal shipped in Phase 02)
+**Status:** ✅ Done (2026-07-12)
 
 ## Goal
 
@@ -23,6 +23,6 @@ and review.
 
 ## Acceptance criteria
 
-- [ ] Creating a second morning entry for the same day updates instead of duplicating
-- [ ] Calendar shows entry coverage; streak survives timezone edges (local day boundaries)
-- [ ] Weekly review renders a full ISO week in one view
+- [x] @@unique([date,type]) + upsert — same-day same-type saves update in place
+- [x] Month calendar with morning/night dots + prev/next; dates stored day-only from the date input, streaks computed on day strings
+- [x] Current ISO week wins/problems/lessons aggregated on the journal page

@@ -3,8 +3,8 @@
 import { revalidatePath } from "next/cache";
 
 import {
-  createJournalEntry,
   deleteJournalEntry,
+  upsertJournalEntry,
 } from "@/repositories/journal.repository";
 import { journalSchema, type JournalInput } from "@/schemas/journal.schema";
 import { isAuthenticated } from "@/lib/require-auth";
@@ -16,7 +16,8 @@ function revalidate() {
   revalidatePath("/");
 }
 
-export async function createJournalEntryAction(
+/** Upsert semantics: one morning + one night per day, saving updates. */
+export async function saveJournalEntryAction(
   input: JournalInput
 ): Promise<ActionResult> {
   if (!(await isAuthenticated())) return actionError("Unauthorized");
@@ -26,7 +27,7 @@ export async function createJournalEntryAction(
   }
   const entry = parsed.data;
   try {
-    await createJournalEntry({
+    await upsertJournalEntry({
       type: entry.type,
       date: new Date(entry.date),
       goals: emptyToNull(entry.goals),

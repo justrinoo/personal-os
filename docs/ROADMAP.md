@@ -12,8 +12,8 @@ work is committed. Details per phase live in [roadmap/](./roadmap/).
 | 05 | [GitHub Integration](./roadmap/phase-05-github.md) | ✅ Done | 2026-07-11 |
 | 06 | [Deployment Tracking](./roadmap/phase-06-deployment.md) | ✅ Done | 2026-07-11 |
 | 07 | [Monitoring](./roadmap/phase-07-monitoring.md) | ✅ Done | 2026-07-12 |
-| 08 | [Journal+](./roadmap/phase-08-journal.md) | 🔜 Next | — |
-| 09 | [Habits+](./roadmap/phase-09-habit.md) | Planned | — |
+| 08 | [Journal+](./roadmap/phase-08-journal.md) | ✅ Done | 2026-07-12 |
+| 09 | [Habits+](./roadmap/phase-09-habit.md) | 🔜 Next | — |
 | 10 | [Learning](./roadmap/phase-10-learning.md) | Planned | — |
 | 11 | [Reports](./roadmap/phase-11-reports.md) | Planned | — |
 | 12 | [AI](./roadmap/phase-12-ai.md) | Planned | — |

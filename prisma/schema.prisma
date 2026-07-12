@@ -503,6 +503,8 @@ model JournalEntry {
   createdAt  DateTime    @default(now())
   updatedAt  DateTime    @updatedAt
 
+  // One morning + one night entry per day (dates stored as day-only).
+  @@unique([date, type])
   @@index([date])
   @@map("journal_entries")
 }

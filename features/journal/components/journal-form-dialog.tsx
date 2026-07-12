@@ -6,7 +6,7 @@ import { format } from "date-fns";
 import { Controller, useForm } from "react-hook-form";
 import { toast } from "sonner";
 
-import { createJournalEntryAction } from "@/actions/journal.actions";
+import { saveJournalEntryAction } from "@/actions/journal.actions";
 import { FieldError } from "@/components/shared/field-error";
 import { Button } from "@/components/ui/button";
 import {
@@ -22,8 +22,24 @@ import { Tabs, TabsList, TabsTrigger } from "@/components/ui/tabs";
 import { Textarea } from "@/components/ui/textarea";
 import { journalSchema, type JournalInput } from "@/schemas/journal.schema";
 
+interface JournalEntryValues {
+  type: JournalInput["type"];
+  date: Date;
+  goals: string | null;
+  focus: string | null;
+  reflection: string | null;
+  wins: string | null;
+  problems: string | null;
+  lessons: string | null;
+  tomorrow: string | null;
+}
+
 interface JournalFormDialogProps {
   trigger: React.ReactNode;
+  /** Prefill for editing; saving upserts the same day+type slot. */
+  entry?: JournalEntryValues;
+  /** Quick-action default (today's morning or night). */
+  defaultType?: JournalInput["type"];
 }
 
 const EMPTY_FIELDS = {
@@ -36,7 +52,11 @@ const EMPTY_FIELDS = {
   tomorrow: "",
 };
 
-export function JournalFormDialog({ trigger }: JournalFormDialogProps) {
+export function JournalFormDialog({
+  trigger,
+  entry,
+  defaultType,
+}: JournalFormDialogProps) {
   const [open, setOpen] = useState(false);
   const {
     register,
@@ -48,24 +68,32 @@ export function JournalFormDialog({ trigger }: JournalFormDialogProps) {
   } = useForm<JournalInput>({
     resolver: zodResolver(journalSchema),
     defaultValues: {
-      type: "MORNING",
-      date: format(new Date(), "yyyy-MM-dd"),
-      ...EMPTY_FIELDS,
+      type: entry?.type ?? defaultType ?? "MORNING",
+      date: format(entry?.date ?? new Date(), "yyyy-MM-dd"),
+      goals: entry?.goals ?? "",
+      focus: entry?.focus ?? "",
+      reflection: entry?.reflection ?? "",
+      wins: entry?.wins ?? "",
+      problems: entry?.problems ?? "",
+      lessons: entry?.lessons ?? "",
+      tomorrow: entry?.tomorrow ?? "",
     },
   });
 
   const entryType = watch("type");
 
   async function onSubmit(values: JournalInput) {
-    const result = await createJournalEntryAction(values);
+    const result = await saveJournalEntryAction(values);
     if (result.ok) {
       toast.success("Journal entry saved");
       setOpen(false);
-      reset({
-        type: values.type,
-        date: format(new Date(), "yyyy-MM-dd"),
-        ...EMPTY_FIELDS,
-      });
+      if (!entry) {
+        reset({
+          type: values.type,
+          date: format(new Date(), "yyyy-MM-dd"),
+          ...EMPTY_FIELDS,
+        });
+      }
     } else {
       toast.error(result.error ?? "Something went wrong");
     }
@@ -76,7 +104,7 @@ export function JournalFormDialog({ trigger }: JournalFormDialogProps) {
       <DialogTrigger asChild>{trigger}</DialogTrigger>
       <DialogContent>
         <DialogHeader>
-          <DialogTitle>New Journal Entry</DialogTitle>
+          <DialogTitle>{entry ? "Edit Journal Entry" : "Journal Entry"}</DialogTitle>
         </DialogHeader>
         <form onSubmit={handleSubmit(onSubmit)} className="flex flex-col gap-4">
           <div className="flex items-end gap-4">
