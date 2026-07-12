@@ -28,6 +28,7 @@ function toActivityData(input: ActivityInput): ActivityData {
     mood: ratingToNumber(input.mood),
     productivity: ratingToNumber(input.productivity),
     projectId: input.projectId || null,
+    learningItemId: input.learningItemId || null,
   };
 }
 

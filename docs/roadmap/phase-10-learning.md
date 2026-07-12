@@ -1,6 +1,6 @@
 # Phase 10 — Learning
 
-**Status:** Planned
+**Status:** ✅ Done (2026-07-12)
 
 ## Goal
 
@@ -9,8 +9,7 @@ certifications — with progress and links back to projects that use them.
 
 ## Scope
 
-1. Models: `LearningItem` (type, title, source url, status, progress %,
-   started/finished dates) and `Technology` (name, category, proficiency)
+1. Model `LearningItem` shipped; **deviation:** `Technology` model skipped (no UI consumer yet — revisit when a skills matrix view exists)
 2. Learning page: in-progress shelf, backlog, finished archive
 3. Link learning items to projects and to daily activities (a LEARNING
    activity can reference the item)
@@ -22,7 +21,6 @@ certifications — with progress and links back to projects that use them.
 
 ## Acceptance criteria
 
-- [ ] Learning items CRUD with progress updates
-- [ ] LEARNING activities can link to an item; item page shows time invested
-      (sum of linked activity durations)
-- [ ] Dashboard shows current in-progress items
+- [x] LearningItem CRUD (type/status/progress/dates/notes + certification issuer/credential/expiry); FINISHED forces progress 100
+- [x] LEARNING activities link to an item (activity form select); cards show time invested (sum of linked durations)
+- [x] Dashboard "Learning now" card with progress bars

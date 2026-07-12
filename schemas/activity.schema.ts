@@ -20,6 +20,8 @@ export const activitySchema = z.object({
   productivity: z.enum(RATING_VALUES).optional(),
   // Empty string means "no project".
   projectId: z.string().optional(),
+  // LEARNING activities may reference a learning item.
+  learningItemId: z.string().optional(),
 });
 
 export type ActivityInput = z.infer<typeof activitySchema>;

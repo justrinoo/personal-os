@@ -4,6 +4,7 @@ import {
   Boxes,
   CalendarCheck,
   FolderKanban,
+  GraduationCap,
   HeartPulse,
   LayoutDashboard,
   ListTodo,
@@ -45,6 +46,7 @@ export const NAV_SECTIONS: NavSection[] = [
     items: [
       { title: "Journal", href: "/journal", icon: BookOpen },
       { title: "Habits", href: "/habits", icon: CalendarCheck },
+      { title: "Learning", href: "/learning", icon: GraduationCap },
     ],
   },
 ];

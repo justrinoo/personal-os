@@ -160,6 +160,7 @@ model Project {
   repository  Repository?
   monitors    Monitor[]
   incidents   Incident[]
+  learningItems LearningItem[]
 
   @@map("projects")
 }
@@ -384,13 +385,60 @@ model DailyActivity {
   mood         Int? // 1–5
   productivity Int? // 1–5
   projectId    String?
+  // LEARNING activities can reference the learning item they advance.
+  learningItemId String?
   createdAt    DateTime         @default(now())
   updatedAt    DateTime         @updatedAt
 
-  project Project? @relation(fields: [projectId], references: [id], onDelete: SetNull)
+  project      Project?      @relation(fields: [projectId], references: [id], onDelete: SetNull)
+  learningItem LearningItem? @relation(fields: [learningItemId], references: [id], onDelete: SetNull)
 
   @@index([date])
   @@map("daily_activities")
+}
+
+// ─────────────────────────────────────────────
+// Learning (Phase 10)
+// ─────────────────────────────────────────────
+
+enum LearningType {
+  COURSE
+  BOOK
+  VIDEO
+  ARTICLE
+  CERTIFICATION
+  OTHER
+}
+
+enum LearningStatus {
+  BACKLOG
+  IN_PROGRESS
+  FINISHED
+  ABANDONED
+}
+
+model LearningItem {
+  id         String         @id @default(cuid())
+  title      String
+  type       LearningType   @default(COURSE)
+  status     LearningStatus @default(BACKLOG)
+  sourceUrl  String?
+  progress   Int            @default(0) // 0–100 %
+  startedAt  DateTime?
+  finishedAt DateTime?
+  notes      String?
+  // Certification extras
+  issuer        String?
+  credentialUrl String?
+  expiresAt     DateTime?
+  projectId  String?
+  createdAt  DateTime       @default(now())
+  updatedAt  DateTime       @updatedAt
+
+  project    Project?        @relation(fields: [projectId], references: [id], onDelete: SetNull)
+  activities DailyActivity[]
+
+  @@map("learning_items")
 }
 
 // ─────────────────────────────────────────────

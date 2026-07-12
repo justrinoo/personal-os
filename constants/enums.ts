@@ -66,3 +66,19 @@ export const ACTIVITY_CATEGORIES = [
 ] as const;
 
 export const JOURNAL_TYPES = ["MORNING", "NIGHT"] as const;
+
+export const LEARNING_TYPES = [
+  "COURSE",
+  "BOOK",
+  "VIDEO",
+  "ARTICLE",
+  "CERTIFICATION",
+  "OTHER",
+] as const;
+
+export const LEARNING_STATUSES = [
+  "BACKLOG",
+  "IN_PROGRESS",
+  "FINISHED",
+  "ABANDONED",
+] as const;

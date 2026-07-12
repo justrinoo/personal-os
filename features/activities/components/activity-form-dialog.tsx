@@ -40,13 +40,20 @@ interface ProjectOption {
   name: string;
 }
 
+interface LearningOption {
+  id: string;
+  title: string;
+}
+
 interface ActivityFormDialogProps {
   projects: ProjectOption[];
+  learningItems?: LearningOption[];
   trigger: React.ReactNode;
 }
 
 export function ActivityFormDialog({
   projects,
+  learningItems = [],
   trigger,
 }: ActivityFormDialogProps) {
   const [open, setOpen] = useState(false);
@@ -55,6 +62,7 @@ export function ActivityFormDialog({
     handleSubmit,
     control,
     reset,
+    watch,
     formState: { errors, isSubmitting },
   } = useForm<ActivityInput>({
     resolver: zodResolver(activitySchema),
@@ -67,8 +75,11 @@ export function ActivityFormDialog({
       mood: "",
       productivity: "",
       projectId: "",
+      learningItemId: "",
     },
   });
+
+  const category = watch("category");
 
   async function onSubmit(values: ActivityInput) {
     const result = await createActivityAction(values);
@@ -84,6 +95,7 @@ export function ActivityFormDialog({
         mood: "",
         productivity: "",
         projectId: values.projectId,
+        learningItemId: "",
       });
     } else {
       toast.error(result.error ?? "Something went wrong");
@@ -143,6 +155,30 @@ export function ActivityFormDialog({
                 )}
               />
             </div>
+            {category === "LEARNING" && learningItems.length > 0 ? (
+              <div className="col-span-2 flex flex-col gap-2">
+                <Label>Learning item</Label>
+                <Controller
+                  control={control}
+                  name="learningItemId"
+                  render={({ field }) => (
+                    <EnumSelect
+                      value={field.value || NO_PROJECT}
+                      onChange={(value) =>
+                        field.onChange(value === NO_PROJECT ? "" : value)
+                      }
+                      options={[
+                        { value: NO_PROJECT, label: "Not linked" },
+                        ...learningItems.map((item) => ({
+                          value: item.id,
+                          label: item.title,
+                        })),
+                      ]}
+                    />
+                  )}
+                />
+              </div>
+            ) : null}
             <div className="flex flex-col gap-2">
               <Label htmlFor="act-date">When</Label>
               <Input id="act-date" type="datetime-local" {...register("date")} />

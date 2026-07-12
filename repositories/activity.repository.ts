@@ -36,6 +36,7 @@ export interface ActivityData {
   mood: number | null;
   productivity: number | null;
   projectId: string | null;
+  learningItemId: string | null;
 }
 
 export function createActivity(data: ActivityData): Promise<DailyActivity> {

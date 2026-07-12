@@ -28,6 +28,10 @@ const STATUS_STYLES: Record<string, string> = {
   URGENT: "bg-red-500/10 text-red-700 dark:text-red-400",
   // Incident severity (LOW/MEDIUM/HIGH shared with priorities above)
   CRITICAL: "bg-red-500/20 text-red-800 dark:text-red-300",
+  // Learning
+  IN_PROGRESS: "bg-sky-500/10 text-sky-700 dark:text-sky-400",
+  FINISHED: "bg-emerald-500/10 text-emerald-700 dark:text-emerald-400",
+  ABANDONED: "bg-muted text-muted-foreground",
 };
 
 interface StatusBadgeProps {

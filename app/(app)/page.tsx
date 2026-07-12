@@ -15,6 +15,7 @@ import { TodayHabits } from "@/features/dashboard/components/today-habits";
 import { safeQuery } from "@/lib/safe-query";
 import { listDeployments } from "@/repositories/deployment.repository";
 import { listActiveHabitsWithRecentLogs } from "@/repositories/habit.repository";
+import { listInProgressItems } from "@/repositories/learning.repository";
 import { getHealthSummary } from "@/repositories/monitoring.repository";
 import {
   getDashboardStats,
@@ -39,6 +40,7 @@ export default async function DashboardPage() {
       ),
     ]);
   const todayHabits = await safeQuery(() => listActiveHabitsWithRecentLogs(), []);
+  const learningNow = await safeQuery(() => listInProgressItems(), []);
   const today = new Date().toDateString();
 
   const dbOnline = stats.ok;
@@ -166,6 +168,36 @@ export default async function DashboardPage() {
               )}
             </CardContent>
           </Card>
+
+          {learningNow.data.length > 0 ? (
+            <Card>
+              <CardHeader>
+                <CardTitle>Learning now</CardTitle>
+              </CardHeader>
+              <CardContent>
+                <ul className="flex flex-col gap-3">
+                  {learningNow.data.map((item) => (
+                    <li key={item.id} className="flex flex-col gap-1.5">
+                      <div className="flex items-center justify-between gap-3">
+                        <span className="truncate text-sm font-medium">
+                          {item.title}
+                        </span>
+                        <span className="font-mono text-xs text-muted-foreground tabular-nums">
+                          {item.progress}%
+                        </span>
+                      </div>
+                      <div className="h-1.5 overflow-hidden rounded-full bg-muted">
+                        <div
+                          className="h-full rounded-full bg-primary"
+                          style={{ width: `${item.progress}%` }}
+                        />
+                      </div>
+                    </li>
+                  ))}
+                </ul>
+              </CardContent>
+            </Card>
+          ) : null}
 
           <Card>
             <CardHeader>

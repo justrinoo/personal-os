@@ -12,6 +12,7 @@ import { Card, CardContent } from "@/components/ui/card";
 import { ActivityFormDialog } from "@/features/activities/components/activity-form-dialog";
 import { safeQuery } from "@/lib/safe-query";
 import { listActivities } from "@/repositories/activity.repository";
+import { listLearningOptions } from "@/repositories/learning.repository";
 import { listProjectOptions } from "@/repositories/project.repository";
 import {
   formatDateTime,
@@ -24,9 +25,10 @@ export const metadata: Metadata = { title: "Activities" };
 export const dynamic = "force-dynamic";
 
 export default async function ActivitiesPage() {
-  const [activities, projects] = await Promise.all([
+  const [activities, projects, learningItems] = await Promise.all([
     safeQuery(() => listActivities(), []),
     safeQuery(() => listProjectOptions(), []),
+    safeQuery(() => listLearningOptions(), []),
   ]);
 
   return (
@@ -37,6 +39,7 @@ export default async function ActivitiesPage() {
       >
         <ActivityFormDialog
           projects={projects.data}
+          learningItems={learningItems.data}
           trigger={
             <Button size="sm">
               <Plus className="size-4" />
