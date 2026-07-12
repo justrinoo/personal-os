@@ -8,6 +8,8 @@ import {
   GitBranch,
   GitCommitHorizontal,
   GitPullRequest,
+  Rocket,
+  Undo2,
 } from "lucide-react";
 
 import { PageHeader } from "@/components/layout/page-header";
@@ -28,6 +30,7 @@ import {
 } from "@/components/ui/tabs";
 import { RepoLinkForm } from "@/features/github/components/repo-link-form";
 import { RepoSyncButton } from "@/features/github/components/repo-sync-button";
+import { listProjectDeployments } from "@/repositories/deployment.repository";
 import {
   getProjectDetail,
   getTasksByBranch,
@@ -58,6 +61,7 @@ export default async function ProjectDetailPage({
   if (!project.data) notFound();
 
   const repo = project.data.repository;
+  const deployments = await safeQuery(() => listProjectDeployments(id, 10), []);
   const [commits, pulls, tasksByBranch] = repo
     ? await Promise.all([
         safeQuery(() => listCommits(repo.id), []),
@@ -227,6 +231,53 @@ export default async function ProjectDetailPage({
                   )}
                 </TabsContent>
               </Tabs>
+            )}
+          </CardContent>
+        </Card>
+
+        <Card>
+          <CardHeader>
+            <CardTitle className="flex items-center gap-2">
+              <Rocket className="size-5" />
+              Deployments
+            </CardTitle>
+            <CardDescription>
+              Latest releases of this project across environments
+            </CardDescription>
+          </CardHeader>
+          <CardContent>
+            {deployments.data.length === 0 ? (
+              <p className="py-4 text-sm text-muted-foreground">
+                Nothing recorded yet — use the Deployments page or the Coolify
+                webhook.
+              </p>
+            ) : (
+              <ul className="flex flex-col divide-y">
+                {deployments.data.map((deployment) => (
+                  <li
+                    key={deployment.id}
+                    className="flex flex-wrap items-center justify-between gap-3 py-3"
+                  >
+                    <div className="flex min-w-0 flex-col">
+                      <span className="inline-flex items-center gap-2 font-medium">
+                        {deployment.version}
+                        {deployment.rollbackOf ? (
+                          <span className="inline-flex items-center gap-1 text-xs text-muted-foreground">
+                            <Undo2 className="size-3.5" />
+                            rollback of {deployment.rollbackOf.version}
+                          </span>
+                        ) : null}
+                      </span>
+                      <span className="text-xs text-muted-foreground">
+                        {formatDateTime(deployment.deployedAt)}
+                        {deployment.success ? "" : " · failed"}
+                        {deployment.rolledBack ? " · rolled back" : ""}
+                      </span>
+                    </div>
+                    <StatusBadge value={deployment.environment} />
+                  </li>
+                ))}
+              </ul>
             )}
           </CardContent>
         </Card>

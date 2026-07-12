@@ -1,4 +1,4 @@
-import { Activity, ListTodo } from "lucide-react";
+import { Activity, ListTodo, Rocket } from "lucide-react";
 
 import { PageHeader } from "@/components/layout/page-header";
 import { DbOfflineBanner } from "@/components/shared/db-offline-banner";
@@ -11,6 +11,9 @@ import {
   CardTitle,
 } from "@/components/ui/card";
 import { AnimatedStats } from "@/features/dashboard/components/animated-stats";
+import { safeQuery } from "@/lib/safe-query";
+import { listDeployments } from "@/repositories/deployment.repository";
+import { getHealthSummary } from "@/repositories/monitoring.repository";
 import {
   getDashboardStats,
   getRecentActivities,
@@ -22,11 +25,17 @@ import { formatDateTime, formatEnumLabel, formatMinutes } from "@/utils/format";
 export const dynamic = "force-dynamic";
 
 export default async function DashboardPage() {
-  const [stats, recentTasks, recentActivities] = await Promise.all([
-    getDashboardStats(),
-    getRecentTasks(),
-    getRecentActivities(),
-  ]);
+  const [stats, recentTasks, recentActivities, recentDeployments, health] =
+    await Promise.all([
+      getDashboardStats(),
+      getRecentTasks(),
+      getRecentActivities(),
+      safeQuery(() => listDeployments(5), []),
+      safeQuery(
+        () => getHealthSummary(),
+        { up: 0, down: 0, unknown: 0, activeIncidents: 0 }
+      ),
+    ]);
 
   const dbOnline = stats.ok;
 
@@ -137,6 +146,77 @@ export default async function DashboardPage() {
                       <span className="text-sm text-muted-foreground tabular-nums">
                         {formatMinutes(activity.durationMin)}
                       </span>
+                    </li>
+                  ))}
+                </ul>
+              )}
+            </CardContent>
+          </Card>
+
+          <Card>
+            <CardHeader>
+              <CardTitle>System Health</CardTitle>
+            </CardHeader>
+            <CardContent>
+              <div className="grid grid-cols-2 gap-4 sm:grid-cols-4">
+                <div className="flex flex-col gap-1">
+                  <span className="font-mono text-2xl font-semibold text-emerald-600 tabular-nums dark:text-emerald-400">
+                    {health.data.up}
+                  </span>
+                  <span className="text-sm text-muted-foreground">Up</span>
+                </div>
+                <div className="flex flex-col gap-1">
+                  <span className="font-mono text-2xl font-semibold tabular-nums text-destructive">
+                    {health.data.down}
+                  </span>
+                  <span className="text-sm text-muted-foreground">Down</span>
+                </div>
+                <div className="flex flex-col gap-1">
+                  <span className="font-mono text-2xl font-semibold text-muted-foreground tabular-nums">
+                    {health.data.unknown}
+                  </span>
+                  <span className="text-sm text-muted-foreground">Unknown</span>
+                </div>
+                <div className="flex flex-col gap-1">
+                  <span className="font-mono text-2xl font-semibold tabular-nums">
+                    {health.data.activeIncidents}
+                  </span>
+                  <span className="text-sm text-muted-foreground">
+                    Active incidents
+                  </span>
+                </div>
+              </div>
+            </CardContent>
+          </Card>
+
+          <Card>
+            <CardHeader>
+              <CardTitle>Recent Deployments</CardTitle>
+            </CardHeader>
+            <CardContent>
+              {recentDeployments.data.length === 0 ? (
+                <EmptyState
+                  icon={Rocket}
+                  title="No deployments yet"
+                  description="Releases you record show up here."
+                />
+              ) : (
+                <ul className="flex flex-col divide-y">
+                  {recentDeployments.data.map((deployment) => (
+                    <li
+                      key={deployment.id}
+                      className="flex items-center justify-between gap-3 py-3"
+                    >
+                      <div className="flex min-w-0 flex-col">
+                        <span className="truncate font-medium">
+                          {deployment.project.name} · {deployment.version}
+                        </span>
+                        <span className="text-xs text-muted-foreground">
+                          {formatDateTime(deployment.deployedAt)}
+                          {deployment.success ? "" : " · failed"}
+                        </span>
+                      </div>
+                      <StatusBadge value={deployment.environment} />
                     </li>
                   ))}
                 </ul>

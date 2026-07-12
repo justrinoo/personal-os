@@ -10,9 +10,9 @@ work is committed. Details per phase live in [roadmap/](./roadmap/).
 | 03 | [Authentication](./roadmap/phase-03-auth.md) | ✅ Done | 2026-07-10 |
 | 04 | [ClickUp Integration](./roadmap/phase-04-clickup.md) | ✅ Stage 1 | 2026-07-11 |
 | 05 | [GitHub Integration](./roadmap/phase-05-github.md) | ✅ Done | 2026-07-11 |
-| 06 | [Deployment Tracking](./roadmap/phase-06-deployment.md) | 🔜 Next | — |
-| 07 | [Monitoring](./roadmap/phase-07-monitoring.md) | Planned | — |
-| 08 | [Journal+](./roadmap/phase-08-journal.md) | Planned | — |
+| 06 | [Deployment Tracking](./roadmap/phase-06-deployment.md) | ✅ Done | 2026-07-11 |
+| 07 | [Monitoring](./roadmap/phase-07-monitoring.md) | ✅ Done | 2026-07-12 |
+| 08 | [Journal+](./roadmap/phase-08-journal.md) | 🔜 Next | — |
 | 09 | [Habits+](./roadmap/phase-09-habit.md) | Planned | — |
 | 10 | [Learning](./roadmap/phase-10-learning.md) | Planned | — |
 | 11 | [Reports](./roadmap/phase-11-reports.md) | Planned | — |

@@ -1,6 +1,7 @@
 # Phase 06 — Deployment Tracking
 
-**Status:** Planned · Diagram: [diagrams/deployment-flow.md](../diagrams/deployment-flow.md)
+**Status:** ✅ Done (2026-07-11) — production deploy itself pending owner Coolify setup
+Diagram: [diagrams/deployment-flow.md](../diagrams/deployment-flow.md)
 
 ## Goal
 
@@ -24,6 +25,11 @@ The `Deployment` model already exists from Phase 01.
 
 ## Acceptance criteria
 
-- [ ] Recorded deployments render on project timeline and dashboard
-- [ ] Coolify webhook creates rows with correct env/commit mapping
-- [ ] Personal OS runs in production behind auth
+- [x] Recorded deployments render on the project detail page and the
+  dashboard "Recent Deployments" card
+- [x] Coolify webhook creates rows: `POST /api/webhooks/coolify?projectId=..&environment=..`
+  with `X-Webhook-Secret: $COOLIFY_WEBHOOK_SECRET`; lenient payload parsing
+  (`commit`/`sha`, `status`, `version`, `message`)
+- [ ] Personal OS in production: Dockerfile (standalone output, `prisma
+  migrate deploy` on boot) + .dockerignore are ready — the actual Coolify
+  deploy needs the owner's server (set env vars from .env.example there)

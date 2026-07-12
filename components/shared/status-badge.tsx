@@ -17,11 +17,17 @@ const STATUS_STYLES: Record<string, string> = {
   REVIEW: "bg-amber-500/15 text-amber-700 dark:text-amber-400",
   TESTING: "bg-amber-500/15 text-amber-700 dark:text-amber-400",
   DONE: "bg-emerald-500/10 text-emerald-700 dark:text-emerald-400",
+  // Deploy environments
+  LOCAL: "bg-muted text-muted-foreground",
+  STAGING: "bg-amber-500/15 text-amber-700 dark:text-amber-400",
+  PRODUCTION: "bg-emerald-500/10 text-emerald-700 dark:text-emerald-400",
   // Priority
   LOW: "bg-muted text-muted-foreground",
   MEDIUM: "bg-sky-500/10 text-sky-700 dark:text-sky-400",
   HIGH: "bg-amber-500/15 text-amber-700 dark:text-amber-400",
   URGENT: "bg-red-500/10 text-red-700 dark:text-red-400",
+  // Incident severity (LOW/MEDIUM/HIGH shared with priorities above)
+  CRITICAL: "bg-red-500/20 text-red-800 dark:text-red-300",
 };
 
 interface StatusBadgeProps {

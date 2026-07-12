@@ -39,6 +39,20 @@ export const TASK_STATUSES = [
 
 export const PRIORITIES = ["LOW", "MEDIUM", "HIGH", "URGENT"] as const;
 
+export const DEPLOY_ENVIRONMENTS = [
+  "LOCAL",
+  "DEVELOPMENT",
+  "STAGING",
+  "PRODUCTION",
+] as const;
+
+export const INCIDENT_SEVERITIES = [
+  "LOW",
+  "MEDIUM",
+  "HIGH",
+  "CRITICAL",
+] as const;
+
 export const ACTIVITY_CATEGORIES = [
   "CODING",
   "MEETING",
